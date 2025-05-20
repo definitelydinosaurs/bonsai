@@ -1,3 +1,8 @@
+#[tauri::command]
+fn dispatch(action_type: String, payload: Option<String>) -> String {
+  format!("{}: {}", action_type, payload.unwrap_or_default())
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
   tauri::Builder::default()
@@ -11,6 +16,7 @@ pub fn run() {
       }
       Ok(())
     })
+    .invoke_handler(tauri::generate_handler![dispatch])
     .run(tauri::generate_context!())
     .expect("error while running tauri application");
 }
