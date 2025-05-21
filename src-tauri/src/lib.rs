@@ -1,3 +1,26 @@
+use std::fs::{self, File};
+use std::io::Result;
+use std::io::prelude::*;
+
+use serde_json::json;
+
+pub fn read_file(file_name: String) -> Result<String> {
+  let data = json!({});
+  let mut buffer = String::new();
+  let mut file = match File::open(&file_name) {
+    Ok(file) => file,
+    Err(_) => {
+      println!("Creating file...");
+      File::create(&file_name)?;
+      fs::write(&file_name, data.to_string())?;
+      File::open(&file_name)?
+    }
+  };
+
+  file.read_to_string(&mut buffer)?;
+  Ok(buffer)
+}
+
 #[tauri::command]
 fn dispatch(action_type: String, payload: Option<String>) -> String {
   format!("{}: {}", action_type, payload.unwrap_or_default())
