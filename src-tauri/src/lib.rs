@@ -1,8 +1,12 @@
 use std::fs::{self, File};
 use std::io::Result;
 use std::io::prelude::*;
+use serde_json::{Value, json};
+use std::sync::Mutex;
 
-use serde_json::json;
+struct State {
+    readings: Mutex<Value>,
+}
 
 pub fn read_file(file_name: String) -> Result<String> {
   let data = json!({});
@@ -39,6 +43,7 @@ pub fn run() {
       }
       Ok(())
     })
+    .manage(State { readings: Mutex::new(json!({})) })
     .invoke_handler(tauri::generate_handler![dispatch])
     .run(tauri::generate_context!())
     .expect("error while running tauri application");
