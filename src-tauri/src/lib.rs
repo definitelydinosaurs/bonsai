@@ -26,8 +26,8 @@ pub fn read_file(file_name: String) -> Result<String> {
 }
 
 #[tauri::command]
-fn dispatch(action_type: String, payload: Option<String>) -> String {
-  format!("{}: {}", action_type, payload.unwrap_or_default())
+fn dispatch(name: String, payload: Option<String>) -> String {
+  format!("{}: {}", name, payload.unwrap_or_default())
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
