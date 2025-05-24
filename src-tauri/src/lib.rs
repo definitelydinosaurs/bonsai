@@ -3,6 +3,7 @@ use std::io::Result;
 use std::io::prelude::*;
 use serde_json::{Value, json};
 use std::sync::Mutex;
+use tauri::Manager;
 
 struct State {
     readings: Mutex<Value>,
@@ -34,6 +35,12 @@ fn dispatch(name: String, payload: Option<String>) -> String {
 pub fn run() {
   tauri::Builder::default()
     .setup(|app| {
+      let initial_data = read_file("readings.json".to_string()).unwrap();
+      let initial_json: Value = serde_json::from_str(&initial_data).unwrap();
+      let state = app.state::<State>();
+      let mut readings = state.readings.lock().unwrap();
+      *readings = initial_json;
+
       if cfg!(debug_assertions) {
         app.handle().plugin(
           tauri_plugin_log::Builder::default()
