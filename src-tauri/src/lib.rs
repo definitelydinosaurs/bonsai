@@ -26,6 +26,21 @@ pub fn read_file(file_name: String) -> Result<String> {
   Ok(buffer)
 }
 
+fn modify_state(state: Value, name: &str, payload: Option<String>) -> Value {
+  let mut new_state = state.clone();
+  match name {
+    "add_reading" => {
+      if let Some(reading) = payload {
+        new_state.as_array_mut().unwrap().push(json!({ "name": name, "reading": reading }));
+      }
+    }
+    _ => {
+      println!("Unknown command: {}", name);
+    }
+  }
+  new_state
+}
+
 #[tauri::command]
 fn dispatch(name: String, payload: Option<String>) -> String {
   format!("{}: {}", name, payload.unwrap_or_default())
