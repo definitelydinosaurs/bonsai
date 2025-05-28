@@ -9,6 +9,12 @@ struct State {
     readings: Mutex<Value>,
 }
 
+pub fn write_file(file_name: &str, content: Value) -> Result<()> {
+  let data = json!(content);
+  fs::write(file_name, data.to_string())?;
+  Ok(())
+}
+
 pub fn read_file(file_name: String) -> Result<String> {
   let data = json!({});
   let mut buffer = String::new();
