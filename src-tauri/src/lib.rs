@@ -15,16 +15,14 @@ pub fn write_file(file_name: &str, content: Value) -> Result<()> {
   Ok(())
 }
 
-pub fn read_file(file_name: String) -> Result<String> {
-  let data = json!({});
+pub fn read_file(file_name: &str, default_value: Value) -> Result<String> {
   let mut buffer = String::new();
-  let mut file = match File::open(&file_name) {
+  let mut file = match File::open(file_name) {
     Ok(file) => file,
     Err(_) => {
-      println!("Creating file...");
-      File::create(&file_name)?;
-      fs::write(&file_name, data.to_string())?;
-      File::open(&file_name)?
+      File::create(file_name)?;
+      write_file(file_name, default_value)?;
+      File::open(file_name)?
     }
   };
 
@@ -59,7 +57,7 @@ fn dispatch(name: String, payload: Option<String>, state: tauri::State<State>) -
 pub fn run() {
   tauri::Builder::default()
     .setup(|app| {
-      let initial_data = read_file("readings.json".to_string()).unwrap();
+      let initial_data = read_file(&"readings.json".to_string(), json!([])).unwrap();
       let initial_json: Value = serde_json::from_str(&initial_data).unwrap();
       let state = app.state::<State>();
       let mut readings = state.readings.lock().unwrap();
