@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { View } from 'react-native'
+import { View, Image } from 'react-native'
 import { useQuery } from '@tanstack/react-query'
 
 import request from '~/util/request'
@@ -10,12 +10,12 @@ import { Input } from '~/reusables/ui/input'
 
 
 export default function Screen() {
-  const { baseUrl, token } = useConfig()
+  const { baseUrl } = useConfig()
   const [isbn, setIsbn] = useState('')
 
   const { data, isLoading, error, refetch } = useQuery({
     queryKey: ['book'],
-    queryFn: () => request.get(`${baseUrl}/book/${isbn}`, { Authorization: token }),
+    queryFn: () => request.get(`${baseUrl}/books?bibkeys=ISBN:${isbn}&jscmd=data&format=json`),
     enabled: false
   })
 
@@ -33,8 +33,13 @@ export default function Screen() {
       { error && <Text className="text-red-500">{ error.message }</Text> }
       { data && (
         <View className="w-full">
-          <Text className="text-lg font-bold">{ data.book.title }</Text>
-          <Text>{ data.book.authors?.join(', ') }</Text>
+          <Image
+            source={{ uri: data[Object.keys(data)[0]].cover.large }}
+            className="w-48 h-64 self-center mb-4"
+            resizeMode="contain"
+          />
+          <Text className="text-lg font-bold text-center">{ data[Object.keys(data)[0]].title }</Text>
+          <Text className="text-center">{ data[Object.keys(data)[0]].authors?.map(author => author.name).join(', ') }</Text>
         </View>
       ) }
     </View>
