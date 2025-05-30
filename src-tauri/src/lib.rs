@@ -11,6 +11,7 @@ struct State {
 
 pub fn write_file(file_name: &str, content: Value) -> Result<()> {
   let data = json!(content);
+  File::create(file_name)?;
   fs::write(file_name, data.to_string())?;
   Ok(())
 }
@@ -20,7 +21,6 @@ pub fn read_file(file_name: &str, default_value: Value) -> Result<String> {
   let mut file = match File::open(file_name) {
     Ok(file) => file,
     Err(_) => {
-      File::create(file_name)?;
       write_file(file_name, default_value)?;
       File::open(file_name)?
     }
