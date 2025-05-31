@@ -48,9 +48,10 @@ fn modify_state(state: Value, name: &str, payload: Option<String>) -> Value {
 #[tauri::command]
 fn dispatch(name: String, payload: Option<String>, state: tauri::State<State>) -> String {
   let readings = state.readings.lock().unwrap().clone();
-  let updated_readings = modify_state(readings, &name, payload.clone());
+  let updated_readings = modify_state(readings, &name, payload.unwrap_or_default().clone());
   *state.readings.lock().unwrap() = updated_readings.clone();
-  format!("{}: {}", name, payload.unwrap_or_default())
+  write_file("readings.json", json!(updated_readings.clone())).expect("Failed to write to file");
+  updated_readings.to_string()
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
