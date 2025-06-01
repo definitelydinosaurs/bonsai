@@ -30,13 +30,11 @@ pub fn read_file(file_name: &str, default_value: Value) -> Result<String> {
   Ok(buffer)
 }
 
-fn modify_state(state: Value, name: &str, payload: Option<String>) -> Value {
+fn modify_state(state: Value, name: &str, payload: &str) -> Value {
   let mut new_state = state.clone();
   match name {
     "add_reading" => {
-      if let Some(reading) = payload {
-        new_state.as_array_mut().unwrap().push(json!({ "name": name, "reading": reading }));
-      }
+        new_state.as_array_mut().unwrap().push(json!({ "reading": payload }));
     }
     _ => {
       println!("Unknown command: {}", name);
@@ -48,7 +46,7 @@ fn modify_state(state: Value, name: &str, payload: Option<String>) -> Value {
 #[tauri::command]
 fn dispatch(name: String, payload: Option<String>, state: tauri::State<State>) -> String {
   let readings = state.readings.lock().unwrap().clone();
-  let updated_readings = modify_state(readings, &name, payload.unwrap_or_default().clone());
+  let updated_readings = modify_state(readings, &name, &payload.unwrap_or_default().clone());
   *state.readings.lock().unwrap() = updated_readings.clone();
   write_file("readings.json", json!(updated_readings.clone())).expect("Failed to write to file");
   updated_readings.to_string()
