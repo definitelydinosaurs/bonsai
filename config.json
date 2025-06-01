@@ -1,0 +1,7 @@
+{
+  "baseUrl": "https://openlibrary.org/api",
+  "app": {
+    "name": "Bonsai",
+    "version": "0.1.0"
+  }
+} 
