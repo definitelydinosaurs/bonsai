@@ -25,21 +25,21 @@ export default function Screen() {
         className='w-full'
         value={isbn}
         onChangeText={setIsbn}
-        placeholder="Enter ISBN here..."
+        placeholder='Enter ISBN here...'
         onSubmitEditing={() => isbn.length === 13 || isbn.length === 10 ? refetch() : ''}
-        returnKeyType="search"
+        returnKeyType='search'
       />
       { isLoading && <Text>Loading...</Text> }
-      { error && <Text className="text-red-500">{ error.message }</Text> }
+      { error && <Text className='text-red-500'>{ error.message }</Text> }
       { data && (
-        <View className="w-full">
+        <View className='w-full'>
           <Image
             source={{ uri: data[Object.keys(data)[0]].cover.large }}
-            className="w-48 h-64 self-center mb-4"
-            resizeMode="contain"
+            className='w-48 h-64 self-center mb-4'
+            resizeMode='contain'
           />
-          <Text className="text-lg font-bold text-center">{ data[Object.keys(data)[0]].title }</Text>
-          <Text className="text-center">{ data[Object.keys(data)[0]].authors?.map(author => author.name).join(', ') }</Text>
+          <Text className='text-lg font-bold text-center'>{ data[Object.keys(data)[0]].title }</Text>
+          <Text className='text-center'>{ data[Object.keys(data)[0]].authors?.map(author => author.name).join(', ') }</Text>
         </View>
       ) }
     </View>
