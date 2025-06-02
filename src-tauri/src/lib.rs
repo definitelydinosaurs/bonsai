@@ -7,6 +7,7 @@ use tauri::Manager;
 
 struct State {
     readings: Mutex<Value>,
+    books: Mutex<Value>,
 }
 
 pub fn write_file(file_name: &str, content: Value) -> Result<()> {
