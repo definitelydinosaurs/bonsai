@@ -1,3 +1,4 @@
+use std::collections::HashMap;
 use std::fs::{self, File};
 use std::io::Result;
 use std::io::prelude::*;
@@ -7,7 +8,7 @@ use tauri::Manager;
 
 struct State {
     readings: Mutex<Value>,
-    books: Mutex<Value>,
+    data: Mutex<HashMap<String, Value>>,
 }
 
 pub fn write_file(file_name: &str, content: Value) -> Result<()> {
@@ -72,7 +73,7 @@ pub fn run() {
       }
       Ok(())
     })
-    .manage(State { readings: Mutex::new(json!({})) })
+    .manage(State { data: Mutex::new(HashMap::new()), readings: Mutex::new(json!({})) })
     .invoke_handler(tauri::generate_handler![dispatch])
     .run(tauri::generate_context!())
     .expect("error while running tauri application");
