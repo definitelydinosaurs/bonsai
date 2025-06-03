@@ -12,7 +12,7 @@ export default function Screen() {
   const { baseUrl } = useConfig()
   const [isbn, setIsbn] = useState('')
 
-  const { data, isLoading, error, refetch } = useQuery({
+  const { data = {}, isLoading, error, refetch } = useQuery({
     queryKey: ['book'],
     queryFn: () => request.get(`${baseUrl}/books?bibkeys=ISBN:${isbn}&jscmd=data&format=json`),
     enabled: false
