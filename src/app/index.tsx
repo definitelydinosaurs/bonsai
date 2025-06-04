@@ -35,8 +35,8 @@ export default function Screen() {
       { data && (
         <View className='flex-1 h-full w-full pt-[20%]'>
           <Image
-            source={{ uri: book.cover ? book.cover.large : '' }}
-            className='w-48 h-64 self-center mb-4'
+            source={{ uri: book.cover ? book.cover.large : 'https://i.imgur.com/of4baFL.png' }}
+            className='w-64 h-96 self-center mb-4'
             resizeMode='contain'
           />
           <Text className='text-lg font-bold text-center'>{ book.title }</Text>
