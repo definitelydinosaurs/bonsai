@@ -58,6 +58,20 @@ fn dispatch(name: String, payload: Option<String>, state: tauri::State<State>) -
 pub fn run() {
   tauri::Builder::default()
     .setup(|app| {
+      let keys = [
+          ("readings", json!([])),
+          ("books", json!({})),
+      ];
+
+      for key in keys {
+          let (name, initial_data) = key;
+          let initial_data = read_file(&format!("{}.json", name), initial_data).unwrap();
+          let initial_json: Value = serde_json::from_str(&initial_data).unwrap();
+          let state = app.state::<State>();
+          let mut data = state.data.lock().unwrap();
+          data.insert(name.to_string(), initial_json);
+      }
+
       let initial_data = read_file(&"readings.json".to_string(), json!([])).unwrap();
       let initial_json: Value = serde_json::from_str(&initial_data).unwrap();
       let state = app.state::<State>();
