@@ -46,7 +46,18 @@ fn modify_state(state: Value, name: &str, payload: &str) -> Value {
 }
 
 #[tauri::command]
-fn dispatch(name: String, payload: Option<String>, state: tauri::State<State>) -> String {
+fn dispatch(event: String, payload: Option<String>, state: tauri::State<State>) -> String {
+  let mut updated_data = state.data.lock().unwrap().clone();
+  let readable_data = updated_data.clone();
+
+  for (key, value) in readable_data.iter() {
+    let updated_value = modify_state(value.clone(), &event, &payload.clone().unwrap_or_default().clone());
+    updated_data.insert(key.clone(), updated_value.clone());
+    write_file(&format!("{}.json", key), json!(updated_value.clone())).expect("Failed to write to file");
+  }
+  *state.data.lock().unwrap() = updated_data.clone();
+  // serde_json::to_string(&updated_data).unwrap()
+
   let readings = state.readings.lock().unwrap().clone();
   let updated_readings = modify_state(readings, &name, &payload.unwrap_or_default().clone());
   *state.readings.lock().unwrap() = updated_readings.clone();
