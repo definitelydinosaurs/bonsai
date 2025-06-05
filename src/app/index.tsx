@@ -32,7 +32,7 @@ export default function Screen() {
       />
       { isLoading && <Text>Loading...</Text> }
       { error && <Text className='text-red-500'>{ error.message }</Text> }
-      { data && (
+      { Object.keys(data).length > 0 && (
         <View className='flex-1 h-full w-full pt-[20%]'>
           <Image
             source={{ uri: book.cover ? book.cover.large : 'https://i.imgur.com/of4baFL.png' }}
