@@ -1,10 +1,12 @@
 import { useState } from 'react'
 import { View, Image } from 'react-native'
 import { useQuery } from '@tanstack/react-query'
+import { invoke } from '@tauri-apps/api/tauri'
 
 import request from '~/util/request'
 import { useConfig } from '~/hook/useConfig'
 
+import { Button } from '~/reusables/ui/button'
 import { Text } from '~/reusables/ui/text'
 import { Input } from '~/reusables/ui/input'
 
@@ -43,6 +45,9 @@ export default function Screen() {
           <Text className='text-center'>{ book.authors?.map(author => author.name).join(', ') }</Text>
         </View>
       ) }
+      <Button variant='default' onPress={() => { invoke('dispatch', { event: 'add_reading', payload: JSON.stringify(book) }) }}>
+        <Text>Add</Text>
+      </Button>
     </View>
   )
 }
