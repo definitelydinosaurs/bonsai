@@ -70,16 +70,16 @@ pub fn run() {
   tauri::Builder::default()
     .setup(|app| {
       let keys = [
-          ("readings", json!([])),
-          ("books", json!({})),
+          ("sources", json!({})),
+          ("readings", json!({})),
       ];
 
-      for key in keys {
-          let (name, initial_data) = key;
+      let state = app.state::<State>();
+      let mut data = state.data.lock().unwrap();
+
+      for (name, initial_data) in keys {
           let initial_data = read_file(&format!("{}.json", name), initial_data).unwrap();
           let initial_json: Value = serde_json::from_str(&initial_data).unwrap();
-          let state = app.state::<State>();
-          let mut data = state.data.lock().unwrap();
           data.insert(name.to_string(), initial_json);
       }
 
