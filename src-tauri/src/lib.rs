@@ -11,6 +11,15 @@ struct State {
     data: Mutex<HashMap<String, Value>>,
 }
 
+
+fn get_state_keys() -> Vec<(&'static str, Value)> {
+    let keys = [
+        ("sources", json!({})),
+        ("readings", json!({})),
+    ];
+    keys.to_vec()
+}
+
 pub fn write_file(file_name: &str, content: Value) -> Result<()> {
   let data = json!(content);
   File::create(file_name)?;
@@ -51,6 +60,7 @@ fn dispatch(event: String, payload: Option<String>, state: tauri::State<State>) 
   let readable_data = updated_data.clone();
 
   for (key, value) in readable_data.iter() {
+    // this needs to be different for each key--state modification is a reducer
     let updated_value = modify_state(value.clone(), &event, &payload.clone().unwrap_or_default().clone());
     updated_data.insert(key.clone(), updated_value.clone());
     write_file(&format!("{}.json", key), json!(updated_value.clone())).expect("Failed to write to file");
@@ -69,15 +79,11 @@ fn dispatch(event: String, payload: Option<String>, state: tauri::State<State>) 
 pub fn run() {
   tauri::Builder::default()
     .setup(|app| {
-      let keys = [
-          ("sources", json!({})),
-          ("readings", json!({})),
-      ];
 
       let state = app.state::<State>();
       let mut data = state.data.lock().unwrap();
 
-      for (name, initial_data) in keys {
+      for (name, initial_data) in get_state_keys() {
           let initial_data = read_file(&format!("{}.json", name), initial_data).unwrap();
           let initial_json: Value = serde_json::from_str(&initial_data).unwrap();
           data.insert(name.to_string(), initial_json);
