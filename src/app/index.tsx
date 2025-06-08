@@ -45,7 +45,7 @@ export default function Screen() {
           <Text className='text-center'>{ book.authors?.map(author => author.name).join(', ') }</Text>
         </View>
       ) }
-      <Button variant='default' onPress={() => { invoke('dispatch', { event: 'add_reading', payload: JSON.stringify(book) }) }}>
+      <Button variant='default' onPress={() => { invoke('dispatch', { event: 'add_source', payload: JSON.stringify(book) }) }}>
         <Text>Add</Text>
       </Button>
     </View>
