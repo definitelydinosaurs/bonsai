@@ -11,7 +11,6 @@ struct State {
     data: Mutex<HashMap<String, Value>>,
 }
 
-
 fn get_state_keys() -> Vec<(&'static str, Value)> {
     let keys = [
         ("sources", json!({})),
@@ -41,14 +40,14 @@ pub fn read_file(file_name: &str, default_value: Value) -> Result<String> {
   Ok(buffer)
 }
 
-fn modify_state(state: Value, name: &str, payload: &str) -> Value {
+fn modify_state(state: Value, event: &str, payload: &str) -> Value {
   let mut new_state = state.clone();
-  match name {
+  match event {
     "add_reading" => {
         new_state.as_array_mut().unwrap().push(json!({ "reading": payload }));
     }
     _ => {
-      println!("Unknown command: {}", name);
+      println!("Unknown command: {}", event);
     }
   }
   new_state
@@ -69,7 +68,7 @@ fn dispatch(event: String, payload: Option<String>, state: tauri::State<State>) 
   // serde_json::to_string(&updated_data).unwrap()
 
   let readings = state.readings.lock().unwrap().clone();
-  let updated_readings = modify_state(readings, &name, &payload.unwrap_or_default().clone());
+  let updated_readings = modify_state(readings, &event, &payload.clone().unwrap_or_default().clone());
   *state.readings.lock().unwrap() = updated_readings.clone();
   write_file("readings.json", json!(updated_readings.clone())).expect("Failed to write to file");
   updated_readings.to_string()
