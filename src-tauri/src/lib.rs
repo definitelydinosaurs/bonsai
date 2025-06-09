@@ -11,14 +11,6 @@ struct State {
     data: Mutex<HashMap<String, Value>>,
 }
 
-fn get_state_keys() -> Vec<(&'static str, Value)> {
-    let keys = [
-        ("sources", json!({})),
-        ("readings", json!({})),
-    ];
-    keys.to_vec()
-}
-
 pub fn write_file(file_name: &str, content: Value) -> Result<()> {
   let data = json!(content);
   File::create(file_name)?;
@@ -51,6 +43,14 @@ fn modify_state(state: Value, event: &str, payload: &str) -> Value {
     }
   }
   new_state
+}
+
+fn get_state_keys() -> Vec<(&'static str, Value)> {
+    let keys = [
+        ("sources", json!({})),
+        ("readings", json!({})),
+    ];
+    keys.to_vec()
 }
 
 #[tauri::command]
