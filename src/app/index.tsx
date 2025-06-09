@@ -9,6 +9,7 @@ import { useConfig } from '~/hook/useConfig'
 import { Button } from '~/reusables/ui/button'
 import { Text } from '~/reusables/ui/text'
 import { Input } from '~/reusables/ui/input'
+import { extractBook } from '~/util/data'
 
 export default function Screen() {
   const { baseUrl } = useConfig()
@@ -20,7 +21,7 @@ export default function Screen() {
     enabled: false
   })
 
-  const book = data[Object.keys(data)[0]] || {}
+  const book = extractBook(data[Object.keys(data)[0]])
 
   return (
     <View className='flex-1 justify-start items-center gap-5 p-6 bg-secondary/30'>
