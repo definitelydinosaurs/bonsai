@@ -45,12 +45,13 @@ fn modify_state(state: Value, event: &str, payload: &str) -> Value {
   new_state
 }
 
-fn get_state_keys() -> Vec<(&'static str, Value)> {
-    let keys = [
-        ("sources", json!({})),
-        ("readings", json!({})),
-    ];
-    keys.to_vec()
+fn get_state_keys() -> HashMap<String, Value> {
+  let mut keys = HashMap::new();
+
+  keys.insert("sources".to_string(), json!({}));
+  keys.insert("readings".to_string(), json!({}));
+
+  keys
 }
 
 #[tauri::command]
@@ -82,8 +83,8 @@ pub fn run() {
       let state = app.state::<State>();
       let mut data = state.data.lock().unwrap();
 
-      for (name, initial_data) in get_state_keys() {
-          let initial_data = read_file(&format!("{}.json", name), initial_data).unwrap();
+      for (name, initial_state) in get_state_keys().iter() {
+          let initial_data = read_file(&format!("{}.json", name), initial_state.clone()).unwrap();
           let initial_json: Value = serde_json::from_str(&initial_data).unwrap();
           data.insert(name.to_string(), initial_json);
       }
