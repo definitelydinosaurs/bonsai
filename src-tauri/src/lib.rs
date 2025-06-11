@@ -11,6 +11,13 @@ struct State {
     data: Mutex<HashMap<String, Value>>,
 }
 
+fn state_identity(state: Value, event: &str, payload: &str) -> Value {
+  // This function is a placeholder for state that does not change
+  // It simply returns the state as is, without modification
+  println!("State identity called with event: {}, payload: {}", event, payload);
+  state
+}
+
 pub fn write_file(file_name: &str, content: Value) -> Result<()> {
   let data = json!(content);
   File::create(file_name)?;
