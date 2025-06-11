@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { View, Image } from 'react-native'
 import { useQuery } from '@tanstack/react-query'
-import { invoke } from '@tauri-apps/api/tauri'
+import { invoke } from '@tauri-apps/api/core'
 
 import request from '~/util/request'
 import { useConfig } from '~/hook/useConfig'
