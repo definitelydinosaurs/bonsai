@@ -21,7 +21,7 @@ export default function Screen() {
     enabled: false
   })
 
-  const book = extractBook(data[Object.keys(data)[0]])
+  const book = extractBook(data[Object.keys(data)[0]] || {})
 
   return (
     <View className='flex-1 justify-start items-center gap-5 p-6 bg-secondary/30'>
