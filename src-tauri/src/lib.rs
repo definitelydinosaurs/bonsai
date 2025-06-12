@@ -52,11 +52,11 @@ fn modify_state(state: Value, event: &str, payload: &str) -> Value {
   new_state
 }
 
-fn get_state_keys() -> HashMap<String, Value> {
+fn get_state_keys() -> HashMap<String, (Value, fn(Value, &str, &str) -> Value)> {
   let mut keys = HashMap::new();
 
-  keys.insert("sources".to_string(), json!({}));
-  keys.insert("readings".to_string(), json!({}));
+  keys.insert("sources".to_string(), (json!({}), state_identity as fn(Value, &str, &str) -> Value));
+  keys.insert("readings".to_string(), (json!({}), modify_state as fn(Value, &str, &str) -> Value));
 
   keys
 }
@@ -66,9 +66,12 @@ fn dispatch(event: String, payload: Option<String>, state: tauri::State<State>) 
   let mut updated_data = state.data.lock().unwrap().clone();
   let readable_data = updated_data.clone();
 
+  let state_keys = get_state_keys();
+
   for (key, value) in readable_data.iter() {
     // this needs to be different for each key--state modification is a reducer
-    let updated_value = modify_state(value.clone(), &event, &payload.clone().unwrap_or_default().clone());
+    let (_initial_value, reducer) = state_keys.get(key).unwrap();
+    let updated_value = reducer(value.clone(), &event, &payload.clone().unwrap_or_default().clone());
     updated_data.insert(key.clone(), updated_value.clone());
     write_file(&format!("{}.json", key), json!(updated_value.clone())).expect("Failed to write to file");
   }
@@ -90,7 +93,8 @@ pub fn run() {
       let state = app.state::<State>();
       let mut data = state.data.lock().unwrap();
 
-      for (name, initial_state) in get_state_keys().iter() {
+      for (name, attributes) in get_state_keys().iter() {
+          let (initial_state, _modify_fn) = attributes;
           let initial_data = read_file(&format!("{}.json", name), initial_state.clone()).unwrap();
           let initial_json: Value = serde_json::from_str(&initial_data).unwrap();
           data.insert(name.to_string(), initial_json);
