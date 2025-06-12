@@ -76,13 +76,7 @@ fn dispatch(event: String, payload: Option<String>, state: tauri::State<State>) 
     write_file(&format!("{}.json", key), json!(updated_value.clone())).expect("Failed to write to file");
   }
   *state.data.lock().unwrap() = updated_data.clone();
-  // serde_json::to_string(&updated_data).unwrap()
-
-  let readings = state.readings.lock().unwrap().clone();
-  let updated_readings = modify_state(readings, &event, &payload.clone().unwrap_or_default().clone());
-  *state.readings.lock().unwrap() = updated_readings.clone();
-  write_file("readings.json", json!(updated_readings.clone())).expect("Failed to write to file");
-  updated_readings.to_string()
+  serde_json::to_string(&updated_data).unwrap()
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
@@ -99,12 +93,6 @@ pub fn run() {
           let initial_json: Value = serde_json::from_str(&initial_data).unwrap();
           data.insert(name.to_string(), initial_json);
       }
-
-      let initial_data = read_file(&"readings.json".to_string(), json!([])).unwrap();
-      let initial_json: Value = serde_json::from_str(&initial_data).unwrap();
-      let state = app.state::<State>();
-      let mut readings = state.readings.lock().unwrap();
-      *readings = initial_json;
 
       if cfg!(debug_assertions) {
         app.handle().plugin(
