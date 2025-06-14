@@ -7,15 +7,7 @@ use std::sync::Mutex;
 use tauri::Manager;
 
 struct State {
-    readings: Mutex<Value>,
-    data: Mutex<HashMap<String, Value>>,
-}
-
-fn state_identity(state: Value, event: &str, payload: &str) -> Value {
-  // This function is a placeholder for state that does not change
-  // It simply returns the state as is, without modification
-  println!("State identity called with event: {}, payload: {}", event, payload);
-  state
+  data: Mutex<HashMap<String, Value>>,
 }
 
 pub fn write_file(file_name: &str, content: Value) -> Result<()> {
@@ -39,7 +31,14 @@ pub fn read_file(file_name: &str, default_value: Value) -> Result<String> {
   Ok(buffer)
 }
 
-fn modify_state(state: Value, event: &str, payload: &str) -> Value {
+fn state_identity(state: Value, event: &str, payload: &str) -> Value {
+  // This function is a placeholder for state that does not change
+  // It simply returns the state as is, without modification
+  println!("State identity called with event: {}, payload: {}", event, payload);
+  state
+}
+
+fn readings_reducer(state: Value, event: &str, payload: &str) -> Value {
   let mut new_state = state.clone();
   match event {
     "add_reading" => {
@@ -56,7 +55,7 @@ fn get_state_keys() -> HashMap<String, (Value, fn(Value, &str, &str) -> Value)> 
   let mut keys = HashMap::new();
 
   keys.insert("sources".to_string(), (json!({}), state_identity as fn(Value, &str, &str) -> Value));
-  keys.insert("readings".to_string(), (json!({}), modify_state as fn(Value, &str, &str) -> Value));
+  keys.insert("readings".to_string(), (json!({}), readings_reducer as fn(Value, &str, &str) -> Value));
 
   keys
 }
@@ -103,7 +102,7 @@ pub fn run() {
       }
       Ok(())
     })
-    .manage(State { data: Mutex::new(HashMap::new()), readings: Mutex::new(json!({})) })
+    .manage(State { data: Mutex::new(HashMap::new()) })
     .invoke_handler(tauri::generate_handler![dispatch])
     .run(tauri::generate_context!())
     .expect("error while running tauri application");
