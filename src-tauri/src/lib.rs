@@ -17,6 +17,24 @@ pub fn write_file(file_name: &str, content: Value) -> Result<()> {
   Ok(())
 }
 
+fn sources_reducer(state: Value, event: &str, payload: &str) -> Value {
+  let mut new_state = state.clone();
+  match event {
+    "add_source" => {
+        let id = new_state.as_object().unwrap().len();
+        new_state.as_object_mut().unwrap().insert(
+            id.to_string(),
+            json!({ "source": payload, "id": id })
+        );
+        new_state
+    }
+    _ => {
+      println!("Unknown command: {}", event);
+    }
+  }
+  state
+}
+
 pub fn read_file(file_name: &str, default_value: Value) -> Result<String> {
   let mut buffer = String::new();
   let mut file = match File::open(file_name) {
