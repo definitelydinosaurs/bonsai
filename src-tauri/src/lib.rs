@@ -22,11 +22,15 @@ fn sources_reducer(state: Value, event: &str, payload: &str) -> Value {
   match event {
     "add_source" => {
         let id = new_state.as_object().unwrap().len();
+        let source: Value = serde_json::from_str(payload).unwrap();
         new_state.as_object_mut().unwrap().insert(
             id.to_string(),
-            json!({ "source": payload, "id": id })
+            json!({
+                "source": source,
+                "id": id,
+            }),
         );
-        new_state
+        return new_state
     }
     _ => {
       println!("Unknown command: {}", event);
@@ -72,7 +76,7 @@ fn readings_reducer(state: Value, event: &str, payload: &str) -> Value {
 fn get_state_keys() -> HashMap<String, (Value, fn(Value, &str, &str) -> Value)> {
   let mut keys = HashMap::new();
 
-  keys.insert("sources".to_string(), (json!({}), state_identity as fn(Value, &str, &str) -> Value));
+  keys.insert("sources".to_string(), (json!({}), sources_reducer as fn(Value, &str, &str) -> Value));
   keys.insert("readings".to_string(), (json!({}), readings_reducer as fn(Value, &str, &str) -> Value));
 
   keys
