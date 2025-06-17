@@ -64,13 +64,13 @@ fn readings_reducer(state: Value, event: &str, payload: &str) -> Value {
   let mut new_state = state.clone();
   match event {
     "add_reading" => {
-        new_state.as_array_mut().unwrap().push(json!({ "reading": payload }));
+        new_state.as_array_mut().unwrap().push(json!({ "reading": payload }))
     }
     _ => {
       println!("Unknown command: {}", event);
     }
   }
-  new_state
+  state
 }
 
 fn get_state_keys() -> HashMap<String, (Value, fn(Value, &str, &str) -> Value)> {
