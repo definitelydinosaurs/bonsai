@@ -48,9 +48,13 @@ export default function RootLayout() {
         <Stack.Screen
           name='index'
           options={{
-            title: 'Bonsai',
+            title: '',
             headerRight: () => <ThemeToggle />,
           }}
+        />
+        <Stack.Screen
+          name='shelves'
+          options={{ title: '' }}
         />
       </Stack>
       <PortalHost />

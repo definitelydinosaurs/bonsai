@@ -4,12 +4,12 @@ import { useQuery } from '@tanstack/react-query'
 import { invoke } from '@tauri-apps/api/core'
 
 import request from '~/util/request'
+import { extractBook } from '~/util/data'
 import { useConfig } from '~/hook/useConfig'
 
 import { Button } from '~/reusables/ui/button'
 import { Text } from '~/reusables/ui/text'
 import { Input } from '~/reusables/ui/input'
-import { extractBook } from '~/util/data'
 
 export default function Screen() {
   const { baseUrl } = useConfig()
