@@ -22,13 +22,11 @@ fn sources_reducer(state: Value, event: &str, payload: &str) -> Value {
   match event {
     "add_source" => {
         let id = new_state.as_object().unwrap().len();
-        let source: Value = serde_json::from_str(payload).unwrap();
-        new_state.as_object_mut().unwrap().insert(
+        let mut source: Value = serde_json::from_str(payload).unwrap();
+        source.as_object_mut().unwrap().insert("id".to_string(), json!(id));
+        source.as_object_mut().unwrap().insert(
             id.to_string(),
-            json!({
-                "source": source,
-                "id": id,
-            }),
+            source,
         );
         return new_state
     }
@@ -64,7 +62,14 @@ fn readings_reducer(state: Value, event: &str, payload: &str) -> Value {
   let mut new_state = state.clone();
   match event {
     "add_reading" => {
-        new_state.as_array_mut().unwrap().push(json!({ "reading": payload }))
+        let id = new_state.as_object().unwrap().len();
+        let mut reading: Value = serde_json::from_str(payload).unwrap();
+        reading.as_object_mut().unwrap().insert("id".to_string(), json!(id));
+        new_state.as_object_mut().unwrap().insert(
+            id.to_string(),
+            reading,
+        );
+        return new_state
     }
     _ => {
       println!("Unknown command: {}", event);
