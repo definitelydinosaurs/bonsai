@@ -7,7 +7,7 @@ import { Text } from '~/reusables/ui/text'
 export default function Settings() {
   const { data = {} } = useQuery({
     queryKey: ['shelves'],
-    queryFn: () => invoke('dispatch', { event: 'initialize_data' })
+    queryFn: () => invoke('dispatch', { event: 'initialize_data' }).then(JSON.parse)
   })
 
   return (
