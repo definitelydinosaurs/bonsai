@@ -24,7 +24,7 @@ fn sources_reducer(state: Value, event: &str, payload: &str) -> Value {
         let id = new_state.as_object().unwrap().len();
         let mut source: Value = serde_json::from_str(payload).unwrap();
         source.as_object_mut().unwrap().insert("id".to_string(), json!(id));
-        source.as_object_mut().unwrap().insert(
+        new_state.as_object_mut().unwrap().insert(
             id.to_string(),
             source,
         );
