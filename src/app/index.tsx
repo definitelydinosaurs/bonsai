@@ -21,6 +21,11 @@ export default function Screen() {
     enabled: false
   })
 
+  const { data: state = {} } = useQuery({
+    queryKey: ['state'],
+    queryFn: () => invoke('dispatch', { event: 'initialize_data' }).then(JSON.parse)
+  })
+
   const book = extractBook(data[Object.keys(data)[0]] || {})
 
   return (
