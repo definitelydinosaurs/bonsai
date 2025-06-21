@@ -21,7 +21,7 @@ export default function Screen() {
     enabled: false
   })
 
-  const { data: state = {} } = useQuery({
+  const { data: state = { sources: {} } } = useQuery({
     queryKey: ['state'],
     queryFn: () => invoke('dispatch', { event: 'initialize_data' }).then(JSON.parse)
   })
@@ -56,6 +56,12 @@ export default function Screen() {
           </View>
         </View>
       ) }
+      { Object.keys(state.sources).map(source => (
+        <View key={state.sources[source].source.id}>
+          <Text>{ state.sources[source].source.title }</Text>
+          <Text>{ state.sources[source].source.authors.map(author => author.name).join(', ') }</Text>
+        </View>
+      )) }
     </View>
   )
 }
