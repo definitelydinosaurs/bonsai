@@ -1,10 +1,11 @@
 use std::collections::HashMap;
-use std::fs::{self, File};
+use std::fs::{self, File, create_dir_all};
 use std::io::Result;
 use std::io::prelude::*;
 use serde_json::{Value, json};
 use std::sync::Mutex;
 use tauri::Manager;
+use tauri::path::PathResolver;
 
 struct State {
   data: Mutex<HashMap<String, Value>>,
@@ -109,6 +110,16 @@ fn dispatch(event: String, payload: Option<String>, state: tauri::State<State>) 
 pub fn run() {
   tauri::Builder::default()
     .setup(|app| {
+
+      let app_data_dir = app.path().app_data_dir().unwrap();
+      if !cfg!(debug_assertions) {
+          println!("App is running in production mode, creating app data directory if it does not exist");
+          if let Err(err) = create_dir_all(&app_data_dir) {
+              eprintln!("Failed to create app data directory: {}", err);
+          }
+      } else {
+          println!("App is running in debug mode, not creating app data directory");
+      }
 
       let state = app.state::<State>();
       let mut data = state.data.lock().unwrap();
