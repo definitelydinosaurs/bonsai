@@ -89,7 +89,18 @@ fn get_state_keys() -> HashMap<String, (Value, fn(Value, &str, &str) -> Value)> 
 }
 
 #[tauri::command]
-fn dispatch(event: String, payload: Option<String>, state: tauri::State<State>) -> String {
+fn dispatch(app: tauri::AppHandle, event: String, payload: Option<String>, state: tauri::State<State>) -> String {
+  let mut app_data_dir = app.path().app_data_dir().unwrap();
+  println!("App data directory: {}", app_data_dir.display());
+
+  // if dev mode, set app data directory to ""
+  if cfg!(debug_assertions) {
+    println!("Running in debug mode, using empty app data directory");
+    app_data_dir = "".into();
+  } else {
+    println!("Running in production mode, using app data directory: {}", app_data_dir.display());
+  }
+
   let mut updated_data = state.data.lock().unwrap().clone();
   let readable_data = updated_data.clone();
 
@@ -100,7 +111,7 @@ fn dispatch(event: String, payload: Option<String>, state: tauri::State<State>) 
     let (_initial_value, reducer) = state_keys.get(key).unwrap();
     let updated_value = reducer(value.clone(), &event, &payload.clone().unwrap_or_default().clone());
     updated_data.insert(key.clone(), updated_value.clone());
-    write_file(&format!("{}.json", key), json!(updated_value.clone())).expect("Failed to write to file");
+    write_file(app_data_dir.join(&format!("{}.json", key)).to_str().unwrap(), json!(updated_value.clone())).expect("Failed to write to file");
   }
   *state.data.lock().unwrap() = updated_data.clone();
   serde_json::to_string(&updated_data).unwrap()
