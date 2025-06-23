@@ -1,7 +1,7 @@
-export const extractBook = ({ isbn, title, authors, cover = '', description = '' }) => ({
+export const extractBook = ({ isbn, title, authors = [], cover, description = '' }) => ({
   isbn,
   title,
-  authors,
-  cover,
+  authors: authors.map(author => author.name),
+  cover: cover?.large || cover || '',
   description
 })
