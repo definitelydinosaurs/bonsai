@@ -123,14 +123,17 @@ pub fn run() {
     .setup(|app| {
 
       let mut app_data_dir = app.path().app_data_dir().unwrap();
-      if !cfg!(debug_assertions) {
-          println!("App is running in production mode, creating app data directory if it does not exist");
-          if let Err(err) = create_dir_all(&app_data_dir) {
-              eprintln!("Failed to create app data directory: {}", err);
-          }
+      // if dev mode, set app data directory to ""
+      if cfg!(debug_assertions) {
+        println!("Running in debug mode, using empty app data directory");
+        app_data_dir = "".into();
       } else {
-          app_data_dir = "".into(); // Use empty string for debug mode
-          println!("App is running in debug mode, not creating app data directory");
+        println!("Running in production mode, using app data directory: {}", app_data_dir.display());
+        if let Err(err) = create_dir_all(&app_data_dir) {
+          eprintln!("Failed to create app data directory: {}", err);
+        } else {
+          println!("App data directory created successfully: {}", app_data_dir.display());
+        }
       }
 
       let state = app.state::<State>();
