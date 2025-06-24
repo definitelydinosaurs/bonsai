@@ -122,13 +122,14 @@ pub fn run() {
   tauri::Builder::default()
     .setup(|app| {
 
-      let app_data_dir = app.path().app_data_dir().unwrap();
+      let mut app_data_dir = app.path().app_data_dir().unwrap();
       if !cfg!(debug_assertions) {
           println!("App is running in production mode, creating app data directory if it does not exist");
           if let Err(err) = create_dir_all(&app_data_dir) {
               eprintln!("Failed to create app data directory: {}", err);
           }
       } else {
+          app_data_dir = "".into(); // Use empty string for debug mode
           println!("App is running in debug mode, not creating app data directory");
       }
 
@@ -137,7 +138,7 @@ pub fn run() {
 
       for (name, attributes) in get_state_keys().iter() {
           let (initial_state, _modify_fn) = attributes;
-          let initial_data = read_file(&format!("{}.json", name), initial_state.clone()).unwrap();
+          let initial_data = read_file(app_data_dir.join(&format!("{}.json", name)).to_str().unwrap(), initial_state.clone()).unwrap();
           let initial_json: Value = serde_json::from_str(&initial_data).unwrap();
           data.insert(name.to_string(), initial_json);
       }
