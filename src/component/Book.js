@@ -10,6 +10,7 @@ const Book = props => (
       resizeMode='contain'
     />
     <Text className='text-lg font-bold text-center'>{ props.title }</Text>
+    { props.subtitle && <Text className='text-lg font-bold text-center'>{ props.subtitle }</Text> }
     <Text className='text-center'>{ props.authors?.map(author => author.name).join(', ') }</Text>
   </View>
 )
