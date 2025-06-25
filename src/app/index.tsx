@@ -17,7 +17,7 @@ export default function Screen() {
   const { baseUrl } = useConfig()
   const [isbn, setIsbn] = useState('')
 
-  const { data = {}, isLoading, error, refetch } = useQuery({
+  const { data = {}, isLoading, isSuccess, error, refetch } = useQuery({
     queryKey: ['book'],
     queryFn: () => request.get(`${baseUrl}/books?bibkeys=ISBN:${isbn}&jscmd=data&format=json`),
     enabled: false
@@ -28,7 +28,7 @@ export default function Screen() {
     queryFn: () => invoke('dispatch', { event: 'initialize_data' }).then(JSON.parse)
   })
 
-  const book = extractBook(data[Object.keys(data)[0]] || {})
+  const book = extractBook({ ...(data[Object.keys(data)[0]] || {}), isbn })
 
   return (
     <View className='flex-1 justify-start items-center gap-5 p-6'>
@@ -42,7 +42,7 @@ export default function Screen() {
       />
       { isLoading && <Text>Loading...</Text> }
       { error && <Text className='text-red-500'>{ error.message }</Text> }
-      { Object.keys(data).length > 0 &&
+      { isSuccess &&
         <>
           <Book {...book} />
           <Button variant='outline' className='w-[20%] mt-4' onPress={() => { invoke('dispatch', { event: 'add_source', payload: JSON.stringify(book) }) }}>
