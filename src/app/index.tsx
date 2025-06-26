@@ -1,11 +1,10 @@
 import { useState } from 'react'
-import { View, Image } from 'react-native'
-import { useQuery } from '@tanstack/react-query'
-import { invoke } from '@tauri-apps/api/core'
+import { View } from 'react-native'
+import { useMutation, useQuery } from '@tanstack/react-query'
 
-import request from '~/util/request'
 import { extractBook } from '~/util/data'
 import { useConfig } from '~/hook/useConfig'
+import { initializeData, getBook, addBook } from '~/query/book'
 
 import { Button } from '~/reusables/ui/button'
 import { Text } from '~/reusables/ui/text'
@@ -17,16 +16,9 @@ export default function Screen() {
   const { baseUrl } = useConfig()
   const [isbn, setIsbn] = useState('')
 
-  const { data = {}, isLoading, isSuccess, error, refetch } = useQuery({
-    queryKey: ['book'],
-    queryFn: () => request.get(`${baseUrl}/books?bibkeys=ISBN:${isbn}&jscmd=data&format=json`),
-    enabled: false
-  })
-
-  const { data: state = { sources: {} } } = useQuery({
-    queryKey: ['state'],
-    queryFn: () => invoke('dispatch', { event: 'initialize_data' }).then(JSON.parse)
-  })
+  const { data: state = { sources: {} } } = useQuery(initializeData)
+  const { data = {}, isLoading, isSuccess, error, refetch } = useQuery(getBook(baseUrl, isbn))
+  const mutation = useMutation(addBook)
 
   const book = extractBook({ ...(data[Object.keys(data)[0]] || {}), isbn })
 
@@ -45,8 +37,8 @@ export default function Screen() {
       { isSuccess &&
         <>
           <Book {...book} />
-          <Button variant='outline' className='w-[20%] mt-4' onPress={() => { invoke('dispatch', { event: 'add_source', payload: JSON.stringify(book) }) }}>
-            <Text>Add</Text>
+          <Button variant='outline' className='w-[20%] mt-4' onPress={() => mutation.mutate(book)}>
+            <Text>{ mutation.isPending ? 'Adding...' : mutation.isSuccess ? 'Added' : 'Add' }</Text>
           </Button>
         </>
       }
