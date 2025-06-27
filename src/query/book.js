@@ -10,7 +10,7 @@ export const initializeData = {
 export const getBook = (baseUrl, isbn) => ({
   queryKey: ['book'],
   queryFn: () => request.get(`${baseUrl}/books?bibkeys=ISBN:${isbn}&jscmd=data&format=json`),
-  enabled: !!isbn
+  enabled: false
 })
 
 export const addBook = {
