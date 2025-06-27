@@ -31,6 +31,11 @@ fn sources_reducer(state: Value, event: &str, payload: &str) -> Value {
         );
         return new_state
     }
+    "delete_source" => {
+      let id: usize = payload.parse().unwrap();
+      new_state.as_object_mut().unwrap().remove(&id.to_string());
+      return new_state
+    }
     _ => {
       println!("Unknown command: {}", event);
     }
