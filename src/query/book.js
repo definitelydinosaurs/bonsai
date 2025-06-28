@@ -13,6 +13,12 @@ export const getBook = (baseUrl, isbn) => ({
   enabled: false
 })
 
-export const addBook = {
+export const addBook = refetch => ({
   mutationFn: book => invoke('dispatch', { event: 'add_source', payload: JSON.stringify(book) }),
-}
+  onSuccess: () => refetch()
+})
+
+export const deleteBook = refetch => ({
+  mutationFn: id => invoke('dispatch', { event: 'delete_source', payload: JSON.stringify(id) }),
+  onSuccess: () => refetch()
+})
