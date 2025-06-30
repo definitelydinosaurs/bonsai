@@ -44,7 +44,7 @@ export default function Screen() {
           </Button>
         </>
       }
-      <ScrollView className='flex-1 w-full' style={{ border: '1px solid red' }} showsVerticalScrollIndicator={false}>
+      <ScrollView className='flex-1 w-full' showsVerticalScrollIndicator={false}>
         { Object.keys(state.sources).map(source =>
           <View key={source} className='w-full justify-center items-center mb-4'>
             <Book key={source} {...state.sources[source]} />
