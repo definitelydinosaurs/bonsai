@@ -18,7 +18,7 @@ export default function Screen() {
 
   const { data: state = { sources: {} }, refetch: refetchState } = useQuery(initializeData)
   const { data = {}, isLoading, isSuccess, error, refetch: refetchBook } = useQuery(getBook(baseUrl, isbn))
-  const mutation = useMutation(addBook(refetchState))
+  const mutation = useMutation(addBook({ setIsbn, refetch: refetchState }))
   const deleteMutation = useMutation(deleteBook(refetchState))
 
   const artifact = data[Object.keys(data)[0]]
@@ -36,19 +36,23 @@ export default function Screen() {
       />
       { isLoading && <Text>Loading...</Text> }
       { error && <Text className='text-red-500'>{ error.message }</Text> }
-      { isSuccess &&
-        <>
-          <Book {...book} />
-          <Button variant='outline' className='w-[20%] mt-4' onPress={() => mutation.mutate(book)}>
-            <Text>{ mutation.isPending ? 'Adding...' : mutation.isSuccess ? 'Added' : 'Add' }</Text>
-          </Button>
-        </>
-      }
-      <ScrollView className='flex-1 w-full' showsVerticalScrollIndicator={false}>
+
+      <ScrollView contentContainerClassName='w-full' showsVerticalScrollIndicator={false}>
+        { isSuccess && isbn.length > 0 && (
+          <View className='w-full justify-center items-center mb-6'>
+            <Book {...book} />
+            <Button variant='outline' className='w-[20%] mt-4' onPress={() => mutation.mutate(book)}>
+              <Text>{ mutation.isPending ? 'Adding...' : mutation.isSuccess ? 'Added' : 'Add' }</Text>
+            </Button>
+          </View>
+        ) }
+
+        { mutation.isSuccess && <Text className='text-green-500'>Added</Text> }
+
         { Object.keys(state.sources).map(source =>
           <View key={source} className='w-full justify-center items-center mb-4'>
             <Book key={source} {...state.sources[source]} />
-            <Button variant='outline' className='w-[20%] mt-4' onPress={() => deleteMutation.mutate(source)}>
+            <Button variant='outline' className='w-full max-w-[256px] mt-4' onPress={() => deleteMutation.mutate(source)}>
               <Text>Delete</Text>
             </Button>
           </View>
