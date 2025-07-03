@@ -3,7 +3,7 @@ const { hairlineWidth } = require('nativewind/theme');
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   darkMode: 'class',
-  content: ['./src/app/**/*.{ts,tsx}', './src/reusables/**/*.{ts,tsx}'],
+  content: ['./src/app/**/*.{js,ts,jsx,tsx}', './src/reusables/**/*.{js,ts,jsx,tsx}'],
   presets: [require('nativewind/preset')],
   theme: {
     extend: {
