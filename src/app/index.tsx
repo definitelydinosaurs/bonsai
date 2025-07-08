@@ -42,15 +42,15 @@ export default function Screen() {
       { isSuccess && isbn.length > 0 && (
         <View className='w-full justify-center items-center mb-6'>
           <Book {...book} />
-          <Button variant='outline' className='w-[20%] mt-4' onPress={() => mutation.mutate(book)}>
+          <Button variant='outline' className='w-full max-w-[256px] mt-4' onPress={() => mutation.mutate(book)}>
             <Text>{ mutation.isPending ? 'Adding...' : mutation.isSuccess ? 'Added' : 'Add' }</Text>
           </Button>
         </View>
       ) }
 
-      <ScrollView contentContainerClassName='w-full' showsVerticalScrollIndicator={false}>
+      { mutation.isSuccess && <Text className='w-fulltext-center text-green-500'>Added</Text> }
 
-        { mutation.isSuccess && <Text className='text-green-500'>Added</Text> }
+      <ScrollView contentContainerClassName='w-full' showsVerticalScrollIndicator={false}>
 
         { Object.keys(state.sources).map(source =>
           <View key={source} className='w-full justify-center items-center mb-4'>
