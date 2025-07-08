@@ -26,26 +26,29 @@ export default function Screen() {
 
   return (
     <View className='flex-1 justify-start items-center gap-5 p-6'>
-      <Input
-        className='w-full'
-        value={isbn}
-        onChangeText={setIsbn}
-        placeholder='Enter ISBN here...'
-        onSubmitEditing={() => isbn.length === 13 || isbn.length === 10 ? refetchBook() : ''}
-        returnKeyType='search'
-      />
+      <View className='w-1/2'>
+        <Input
+          value={isbn}
+          onChangeText={setIsbn}
+          placeholder='Enter ISBN here...'
+          onSubmitEditing={() => isbn.length === 13 || isbn.length === 10 ? refetchBook() : ''}
+          returnKeyType='search'
+        />
+      </View>
+
       { isLoading && <Text>Loading...</Text> }
       { error && <Text className='text-red-500'>{ error.message }</Text> }
 
+      { isSuccess && isbn.length > 0 && (
+        <View className='w-full justify-center items-center mb-6'>
+          <Book {...book} />
+          <Button variant='outline' className='w-[20%] mt-4' onPress={() => mutation.mutate(book)}>
+            <Text>{ mutation.isPending ? 'Adding...' : mutation.isSuccess ? 'Added' : 'Add' }</Text>
+          </Button>
+        </View>
+      ) }
+
       <ScrollView contentContainerClassName='w-full' showsVerticalScrollIndicator={false}>
-        { isSuccess && isbn.length > 0 && (
-          <View className='w-full justify-center items-center mb-6'>
-            <Book {...book} />
-            <Button variant='outline' className='w-[20%] mt-4' onPress={() => mutation.mutate(book)}>
-              <Text>{ mutation.isPending ? 'Adding...' : mutation.isSuccess ? 'Added' : 'Add' }</Text>
-            </Button>
-          </View>
-        ) }
 
         { mutation.isSuccess && <Text className='text-green-500'>Added</Text> }
 
