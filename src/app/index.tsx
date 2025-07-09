@@ -1,8 +1,9 @@
 import { useState } from 'react'
-import { ScrollView, View } from 'react-native'
+import { ScrollView, View, Modal, Pressable } from 'react-native'
 import { useMutation, useQuery } from '@tanstack/react-query'
 
 import useConfig from '~/hook/useConfig'
+import { useColorScheme } from '~/lib/useColorScheme'
 import { extractBook } from '~/util/data'
 import { addBook, deleteBook, getBook, initializeData } from '~/query/book'
 
@@ -12,9 +13,18 @@ import { Input } from '~/reusables/ui/input'
 
 import Book from '~/component/Book'
 
+const handleSearch = ({ isbn, refetchBook, setShowModal }) => {
+  if (isbn.length === 13 || isbn.length === 10) {
+    refetchBook()
+    setShowModal(true)
+  }
+}
+
 export default function Screen() {
   const { baseUrl } = useConfig()
+  const { isDarkColorScheme } = useColorScheme()
   const [isbn, setIsbn] = useState('')
+  const [showModal, setShowModal] = useState(false)
 
   const { data: state = { sources: {} }, refetch: refetchState } = useQuery(initializeData)
   const { data = {}, isLoading, isSuccess, error, refetch: refetchBook } = useQuery(getBook(baseUrl, isbn))
@@ -31,7 +41,7 @@ export default function Screen() {
           value={isbn}
           onChangeText={setIsbn}
           placeholder='Enter ISBN here...'
-          onSubmitEditing={() => isbn.length === 13 || isbn.length === 10 ? refetchBook() : ''}
+          onSubmitEditing={() => handleSearch({ isbn, refetchBook, setShowModal })}
           returnKeyType='search'
         />
       </View>
@@ -39,19 +49,40 @@ export default function Screen() {
       { isLoading && <Text>Loading...</Text> }
       { error && <Text className='text-red-500'>{ error.message }</Text> }
 
-      { isSuccess && isbn.length > 0 && (
-        <View className='w-full justify-center items-center mb-6'>
-          <Book {...book} />
-          <Button variant='outline' className='w-full max-w-[256px] mt-4' onPress={() => mutation.mutate(book)}>
-            <Text>{ mutation.isPending ? 'Adding...' : mutation.isSuccess ? 'Added' : 'Add' }</Text>
-          </Button>
-        </View>
-      ) }
+      <Modal
+        visible={showModal && isSuccess && isbn.length > 0}
+        transparent
+        animationType='fade'
+        onRequestClose={() => setShowModal(false)}
+      >
+        <Pressable
+          className={`flex-1 bg-${isDarkColorScheme ? 'white' : 'black'}/50 justify-center items-center p-4`}
+          onPress={() => setShowModal(false)}
+        >
+          <Pressable
+            className='bg-background rounded-lg p-6 max-w-sm w-full'
+            onPress={(e) => e.stopPropagation()}
+          >
+            <Book {...book} />
+            <Button
+              variant='outline'
+              className='w-full mt-4'
+              onPress={() => {
 
-      { mutation.isSuccess && <Text className='w-fulltext-center text-green-500'>Added</Text> }
+                mutation.mutate(book)
+                setShowModal(false)
+                setIsbn('')
+              }}
+            >
+              <Text>{ mutation.isPending ? 'Adding...' : 'Add to Library' }</Text>
+            </Button>
+          </Pressable>
+        </Pressable>
+      </Modal>
+
+      { mutation.isSuccess && <Text className='w-full text-center text-green-500'>Added</Text> }
 
       <ScrollView contentContainerClassName='w-full grid grid-cols-3 gap-4' showsVerticalScrollIndicator={false}>
-
         { Object.keys(state.sources).map(source =>
           <View key={source} className='justify-center items-center mb-4'>
             <Book key={source} {...state.sources[source]} />
