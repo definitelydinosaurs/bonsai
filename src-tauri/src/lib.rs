@@ -6,6 +6,7 @@ use serde_json::{Value, json};
 use std::sync::Mutex;
 use tauri::Manager;
 use tauri::path::PathResolver;
+use uuid::Uuid;
 
 struct State {
   data: Mutex<HashMap<String, Value>>,
@@ -22,7 +23,7 @@ fn sources_reducer(state: Value, event: &str, payload: &str) -> Value {
   let mut new_state = state.clone();
   match event {
     "add_source" => {
-        let id = new_state.as_object().unwrap().len();
+        let id = Uuid::new_v4().to_string();
         let mut source: Value = serde_json::from_str(payload).unwrap();
         source.as_object_mut().unwrap().insert("id".to_string(), json!(id));
         new_state.as_object_mut().unwrap().insert(
@@ -32,7 +33,7 @@ fn sources_reducer(state: Value, event: &str, payload: &str) -> Value {
         return new_state
     }
     "delete_source" => {
-      let id: usize = payload.parse().unwrap();
+      let id: Uuid = payload.parse().unwrap();
       new_state.as_object_mut().unwrap().remove(&id.to_string());
       return new_state
     }
