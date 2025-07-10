@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { ScrollView, View, Modal, Pressable } from 'react-native'
+import { ScrollView, View } from 'react-native'
 import { useMutation, useQuery } from '@tanstack/react-query'
 
 import useConfig from '~/hook/useConfig'
@@ -12,6 +12,7 @@ import { Text } from '~/reusables/ui/text'
 import { Input } from '~/reusables/ui/input'
 
 import Book from '~/component/Book'
+import Modal from '~/component/Modal'
 
 const handleSearch = ({ isbn, refetchBook, setShowModal }) => {
   if (isbn.length === 13 || isbn.length === 10) {
@@ -50,35 +51,16 @@ export default function Screen() {
       { error && <Text className='text-red-500'>{ error.message }</Text> }
 
       <Modal
-        visible={showModal && isSuccess && isbn.length > 0}
-        transparent
-        animationType='fade'
-        onRequestClose={() => setShowModal(false)}
-      >
-        <Pressable
-          className={`flex-1 bg-${isDarkColorScheme ? 'white' : 'black'}/50 justify-center items-center p-4`}
-          onPress={() => setShowModal(false)}
-        >
-          <Pressable
-            className='bg-background rounded-lg p-6 max-w-sm w-full'
-            onPress={(e) => e.stopPropagation()}
-          >
-            <Book {...book} />
-            <Button
-              variant='outline'
-              className='w-full mt-4'
-              onPress={() => {
-
-                mutation.mutate(book)
-                setShowModal(false)
-                setIsbn('')
-              }}
-            >
-              <Text>{ mutation.isPending ? 'Adding...' : 'Add to Library' }</Text>
-            </Button>
-          </Pressable>
-        </Pressable>
-      </Modal>
+        {...{ book, isDarkColorScheme }}
+        isVisible={showModal && isSuccess && isbn.length > 0}
+        isPending={mutation.isPending}
+        onClose={() => setShowModal(false)}
+        onPress={() => {
+          mutation.mutate(book)
+          setShowModal(false)
+          setIsbn('')
+        }}
+      />
 
       { mutation.isSuccess && <Text className='w-full text-center text-green-500'>Added</Text> }
 
