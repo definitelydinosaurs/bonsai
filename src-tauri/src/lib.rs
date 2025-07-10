@@ -2,6 +2,8 @@ use std::collections::HashMap;
 use std::fs::{self, File, create_dir_all};
 use std::io::Result;
 use std::io::prelude::*;
+use std::time::{SystemTime, UNIX_EPOCH};
+
 use serde_json::{Value, json};
 use std::sync::Mutex;
 use tauri::Manager;
@@ -25,7 +27,14 @@ fn sources_reducer(state: Value, event: &str, payload: &str) -> Value {
     "add_source" => {
         let id = Uuid::new_v4().to_string();
         let mut source: Value = serde_json::from_str(payload).unwrap();
+
+    let timestamp = SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .expect("Time went backwards")
+        .as_millis() as u64;
+
         source.as_object_mut().unwrap().insert("id".to_string(), json!(id));
+        source.as_object_mut().unwrap().insert("createTime".to_string(), json!(timestamp));
         new_state.as_object_mut().unwrap().insert(
             id.to_string(),
             source,
