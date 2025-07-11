@@ -1,2 +1,5 @@
 src-tauri/readings.json
 src-tauri/sources.json
+src-tauri/sessions.json
+src-tauri/learnings.json
+src-tauri/settings.json

@@ -43,3 +43,6 @@ expo-env.d.ts
 # data
 readings.json
 sources.json
+sessions.json
+learnings.json
+settings.json

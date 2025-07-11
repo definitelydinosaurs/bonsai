@@ -98,7 +98,9 @@ fn get_state_keys() -> HashMap<String, (Value, fn(Value, &str, &str) -> Value)> 
   let mut keys = HashMap::new();
 
   keys.insert("sources".to_string(), (json!({}), sources_reducer as fn(Value, &str, &str) -> Value));
-  keys.insert("readings".to_string(), (json!({}), readings_reducer as fn(Value, &str, &str) -> Value));
+  keys.insert("sessions".to_string(), (json!({}), readings_reducer as fn(Value, &str, &str) -> Value));
+  keys.insert("learnings".to_string(), (json!({}), state_identity as fn(Value, &str, &str) -> Value));
+  keys.insert("settings".to_string(), (json!({}), state_identity as fn(Value, &str, &str) -> Value));
 
   keys
 }
