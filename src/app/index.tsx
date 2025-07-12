@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { ScrollView, View } from 'react-native'
 import { useMutation, useQuery } from '@tanstack/react-query'
+import isISBN from 'validator/lib/isISBN'
 
 import useConfig from '~/hook/useConfig'
 import { useColorScheme } from '~/lib/useColorScheme'
@@ -14,8 +15,8 @@ import { Input } from '~/reusables/ui/input'
 import Book from '~/component/Book'
 import Modal from '~/component/Modal'
 
-const handleSearch = ({ isbn, refetchBook, setShowModal }) => {
-  if (isbn.length === 13 || isbn.length === 10) {
+const handleSearch = ({ refetchBook, setShowModal, text }) => {
+  if (isISBN(text)) {
     refetchBook()
     setShowModal(true)
   }
@@ -24,25 +25,25 @@ const handleSearch = ({ isbn, refetchBook, setShowModal }) => {
 export default function Screen() {
   const { baseUrl } = useConfig()
   const { isDarkColorScheme } = useColorScheme()
-  const [isbn, setIsbn] = useState('')
+  const [text, setText] = useState('')
   const [showModal, setShowModal] = useState(false)
 
   const { data: state = { sources: {} }, refetch: refetchState } = useQuery(initializeData)
-  const { data = {}, isLoading, isSuccess, error, refetch: refetchBook } = useQuery(getBook(baseUrl, isbn))
-  const mutation = useMutation(addBook({ setIsbn, refetch: refetchState }))
+  const { data = {}, isLoading, isSuccess, error, refetch: refetchBook } = useQuery(getBook(baseUrl, text))
+  const mutation = useMutation(addBook({ setText, refetch: refetchState }))
   const deleteMutation = useMutation(deleteBook(refetchState))
 
   const artifact = data[Object.keys(data)[0]]
-  const book = extractBook({ ...(artifact || {}), isbn, cover: artifact?.cover?.large || '' })
+  const book = extractBook({ ...(artifact || {}), isbn: text, cover: artifact?.cover?.large || '' })
 
   return (
     <View className='flex-1 justify-start items-center gap-5 p-6'>
       <View className='w-1/2'>
         <Input
-          value={isbn}
-          onChangeText={setIsbn}
+          value={text}
+          onChangeText={setText}
           placeholder='Enter ISBN here...'
-          onSubmitEditing={() => handleSearch({ isbn, refetchBook, setShowModal })}
+          onSubmitEditing={() => handleSearch({ text, refetchBook, setShowModal })}
           returnKeyType='search'
         />
       </View>
@@ -52,13 +53,13 @@ export default function Screen() {
 
       <Modal
         {...{ book, isDarkColorScheme }}
-        isVisible={showModal && isSuccess && isbn.length > 0}
+        isVisible={showModal && isSuccess && text.length > 0}
         isPending={mutation.isPending}
         onClose={() => setShowModal(false)}
         onPress={() => {
           mutation.mutate(book)
           setShowModal(false)
-          setIsbn('')
+          setText('')
         }}
       />
 
