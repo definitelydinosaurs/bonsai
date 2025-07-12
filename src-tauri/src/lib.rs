@@ -74,6 +74,23 @@ fn state_identity(state: Value, event: &str, payload: &str) -> Value {
   state
 }
 
+fn settings_reducer(state: Value, event: &str, payload: &str) -> Value {
+  let mut new_state = state.clone();
+  match event {
+    "settings_updated" | "setting_added" => {
+      let payload_value: Value = serde_json::from_str(payload).unwrap();
+      for (key, value) in payload_value.as_object().unwrap() {
+        new_state.as_object_mut().unwrap().insert(key.to_string(), value.clone());
+      }
+      return new_state;
+    }
+    _ => {
+      println!("Unknown command: {}", event);
+    }
+  }
+  state
+}
+
 fn readings_reducer(state: Value, event: &str, payload: &str) -> Value {
   let mut new_state = state.clone();
   match event {
@@ -98,9 +115,9 @@ fn get_state_keys() -> HashMap<String, (Value, fn(Value, &str, &str) -> Value)> 
   let mut keys = HashMap::new();
 
   keys.insert("sources".to_string(), (json!({}), sources_reducer as fn(Value, &str, &str) -> Value));
-  keys.insert("sessions".to_string(), (json!({}), readings_reducer as fn(Value, &str, &str) -> Value));
+  keys.insert("sessions".to_string(), (json!({}), state_identity as fn(Value, &str, &str) -> Value));
   keys.insert("learnings".to_string(), (json!({}), state_identity as fn(Value, &str, &str) -> Value));
-  keys.insert("settings".to_string(), (json!({}), state_identity as fn(Value, &str, &str) -> Value));
+  keys.insert("settings".to_string(), (json!({}), settings_reducer as fn(Value, &str, &str) -> Value));
 
   keys
 }
