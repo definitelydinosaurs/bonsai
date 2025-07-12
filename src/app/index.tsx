@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { ScrollView, View } from 'react-native'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import isISBN from 'validator/lib/isISBN'
@@ -34,6 +34,13 @@ export default function Screen() {
 
   const artifact = data[Object.keys(data)[0]]
   const book = extractBook({ ...(artifact || {}), isbn: text, cover: artifact?.cover?.large || '' })
+
+  useEffect(() => {
+    if (mutation.isSuccess) {
+      const timer = setTimeout(() => { mutation.reset() }, 3000)
+      return () => clearTimeout(timer)
+    }
+  }, [mutation.isSuccess])
 
   return (
     <View className='flex-1 justify-start items-center gap-5 p-6'>
