@@ -2,6 +2,12 @@ import { invoke } from '@tauri-apps/api/core'
 
 import request from '~/util/request'
 
+export const getDOI = doi => ({
+  queryKey: ['doi'],
+  queryFn: () => request.get(`https://api.crossref.org/works/${doi}`),
+  enabled: false
+})
+
 export const initializeData = {
   queryKey: ['state'],
   queryFn: () => invoke('dispatch', { event: 'initialize_data' }).then(JSON.parse)
