@@ -10,7 +10,6 @@ import { addBook, deleteBook, getBook, initializeData } from '~/query/book'
 
 import { Button } from '~/reusables/ui/button'
 import { Text } from '~/reusables/ui/text'
-import { Input } from '~/reusables/ui/input'
 
 import Book from '~/component/Book'
 import Modal from '~/component/Modal'
@@ -38,32 +37,22 @@ export default function Screen() {
 
   return (
     <View className='flex-1 justify-start items-center gap-5 p-6'>
-      <View className='w-1/2'>
-        <Input
-          value={text}
-          onChangeText={setText}
-          placeholder='Enter ISBN here...'
-          onSubmitEditing={() => handleSearch({ text, refetchBook, setShowModal })}
-          returnKeyType='search'
-        />
-      </View>
-
-      { isLoading && <Text>Loading...</Text> }
-      { error && <Text className='text-red-500'>{ error.message }</Text> }
+      <Button variant='outline' onPress={() => setShowModal(true)}>
+        <Text>Search</Text>
+      </Button>
 
       <Modal
-        {...{ book, isDarkColorScheme }}
-        isVisible={showModal && isSuccess && text.length > 0}
+        {...{ book, error, isDarkColorScheme, isLoading, isSuccess, setText, text }}
+        isAdded={mutation.isSuccess}
+        isVisible={showModal}
         isPending={mutation.isPending}
+        onSearch={() => handleSearch({ text, refetchBook, setShowModal })}
         onClose={() => setShowModal(false)}
         onPress={() => {
           mutation.mutate(book)
-          setShowModal(false)
           setText('')
         }}
       />
-
-      { mutation.isSuccess && <Text className='w-full text-center text-green-500'>Added</Text> }
 
       <ScrollView contentContainerClassName='w-full grid grid-cols-3 gap-4' showsVerticalScrollIndicator={false}>
         { Object.keys(state.sources).map(source =>
