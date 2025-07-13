@@ -118,6 +118,7 @@ fn get_state_keys() -> HashMap<String, (Value, fn(Value, &str, &str) -> Value)> 
   keys.insert("sessions".to_string(), (json!({}), state_identity as fn(Value, &str, &str) -> Value));
   keys.insert("learnings".to_string(), (json!({}), state_identity as fn(Value, &str, &str) -> Value));
   keys.insert("settings".to_string(), (json!({}), settings_reducer as fn(Value, &str, &str) -> Value));
+  keys.insert("collections".to_string(), (json!({}), state_identity as fn(Value, &str, &str) -> Value));
 
   keys
 }
