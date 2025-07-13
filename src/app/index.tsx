@@ -67,7 +67,7 @@ export default function Screen() {
 
       <ScrollView contentContainerClassName='w-full grid grid-cols-3 gap-4' showsVerticalScrollIndicator={false}>
         { Object.keys(state.sources).map(source =>
-          <View key={source} className='justify-center items-center mb-4'>
+          <View key={source} className='w-full justify-center items-center mb-4'>
             <Book key={source} {...state.sources[source]} />
             <Button variant='outline' className='w-full max-w-[256px] mt-4' onPress={() => deleteMutation.mutate(source)}>
               <Text>Delete</Text>
