@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { ScrollView, View } from 'react-native'
-import { useMutation, useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import isISBN from 'validator/lib/isISBN'
 
 import useConfig from '~/hook/useConfig'
@@ -24,6 +24,7 @@ const handleSearch = ({ refetchBook, setShowModal, text }) => {
 export default function Screen() {
   const { baseUrl } = useConfig()
   const { isDarkColorScheme } = useColorScheme()
+  const queryClient = useQueryClient()
   const [text, setText] = useState('')
   const [showModal, setShowModal] = useState(false)
 
@@ -37,7 +38,10 @@ export default function Screen() {
 
   useEffect(() => {
     if (mutation.isSuccess) {
-      const timer = setTimeout(() => { mutation.reset() }, 3000)
+      const timer = setTimeout(() => {
+        mutation.reset()
+        queryClient.removeQueries({ queryKey: ['book'] })
+      }, 3000)
       return () => clearTimeout(timer)
     }
   }, [mutation.isSuccess])
