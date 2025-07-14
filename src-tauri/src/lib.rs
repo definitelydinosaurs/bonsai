@@ -136,20 +136,18 @@ fn dispatch(app: tauri::AppHandle, event: String, payload: Option<String>, state
     println!("Running in production mode, using app data directory: {}", app_data_dir.display());
   }
 
-  let mut updated_data = state.data.lock().unwrap().clone();
-  let readable_data = updated_data.clone();
-
+  let mut data = state.data.lock().unwrap();
   let state_keys = get_state_keys();
 
-  for (key, value) in readable_data.iter() {
-    // this needs to be different for each key--state modification is a reducer
-    let (_initial_value, reducer) = state_keys.get(key).unwrap();
-    let updated_value = reducer(value.clone(), &event, &payload.clone().unwrap_or_default().clone());
-    updated_data.insert(key.clone(), updated_value.clone());
-    write_file(app_data_dir.join(&format!("{}.json", key)).to_str().unwrap(), json!(updated_value.clone())).expect("Failed to write to file");
+  for (key, value) in data.iter_mut() {
+    if let Some((_initial_value, reducer)) = state_keys.get(key) {
+      let updated_value = reducer(value.clone(), &event, &payload.as_deref().unwrap_or_default());
+      *value = updated_value.clone();
+      write_file(app_data_dir.join(&format!("{}.json", key)).to_str().unwrap(), json!(updated_value)).expect("Failed to write to file");
+    }
   }
-  *state.data.lock().unwrap() = updated_data.clone();
-  serde_json::to_string(&updated_data).unwrap()
+
+  serde_json::to_string(&*data).unwrap()
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
