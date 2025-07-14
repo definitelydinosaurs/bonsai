@@ -1,25 +1,18 @@
 import { useEffect, useState } from 'react'
 import { ScrollView, View } from 'react-native'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import isISBN from 'validator/lib/isISBN'
 
 import useConfig from '~/hook/useConfig'
-import { useColorScheme } from '~/lib/useColorScheme'
+import { handleSearch } from '~/handler/source'
 import { extractBook } from '~/util/data'
-import { addBook, deleteBook, getBook, initializeData } from '~/query/book'
+import { addBook, deleteBook, getBook, initializeData } from '~/query/source'
 
+import { useColorScheme } from '~/lib/useColorScheme'
 import { Button } from '~/reusables/ui/button'
 import { Text } from '~/reusables/ui/text'
 
 import Book from '~/component/Book'
 import Modal from '~/component/Modal'
-
-const handleSearch = ({ refetchBook, setShowModal, text }) => {
-  if (isISBN(text)) {
-    refetchBook()
-    setShowModal(true)
-  }
-}
 
 export default function Screen() {
   const { baseUrl } = useConfig()
