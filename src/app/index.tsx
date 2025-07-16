@@ -50,7 +50,7 @@ export default function Screen() {
         isAdded={mutation.isSuccess}
         isVisible={showModal}
         isPending={mutation.isPending}
-        onSearch={() => handleSearch({ text, refetchBook, setShowModal })}
+        onSearch={() => handleSearch({ text, refetchBook })}
         onClose={() => setShowModal(false)}
         onPress={() => {
           mutation.mutate(book)
