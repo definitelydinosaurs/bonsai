@@ -91,7 +91,7 @@ fn settings_reducer(state: Value, event: &str, payload: &str) -> Value {
   state
 }
 
-fn readings_reducer(state: Value, event: &str, payload: &str) -> Value {
+fn sessions_reducer(state: Value, event: &str, payload: &str) -> Value {
   let mut new_state = state.clone();
   match event {
     "add_reading" => {
