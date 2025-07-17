@@ -24,7 +24,7 @@ fn write_file(file_name: &str, content: Value) -> Result<()> {
 fn sources_reducer(state: Value, event: &str, payload: &str) -> Value {
   let mut new_state = state.clone();
   match event {
-    "add_source" | "source_added" => {
+    "source_added" => {
         let id = Uuid::new_v4().to_string();
         let mut source: Value = serde_json::from_str(payload).unwrap();
 
@@ -41,7 +41,7 @@ fn sources_reducer(state: Value, event: &str, payload: &str) -> Value {
         );
         return new_state
     }
-    "delete_source" | "source_deleted" => {
+    "source_deleted" => {
       let id: Uuid = payload.parse().unwrap();
       new_state.as_object_mut().unwrap().remove(&id.to_string());
       return new_state
