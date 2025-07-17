@@ -20,7 +20,7 @@ export const getBook = (baseUrl, isbn) => ({
 })
 
 export const addBook = ({ refetch, setText }) => ({
-  mutationFn: book => invoke('dispatch', { event: 'add_source', payload: JSON.stringify(book) }),
+  mutationFn: book => invoke('dispatch', { event: 'source_added', payload: JSON.stringify(book) }),
   onSuccess: () => {
     setText('')
     refetch()
@@ -28,6 +28,6 @@ export const addBook = ({ refetch, setText }) => ({
 })
 
 export const deleteBook = refetch => ({
-  mutationFn: id => invoke('dispatch', { event: 'delete_source', payload: id }),
+  mutationFn: id => invoke('dispatch', { event: 'source_deleted', payload: id }),
   onSuccess: () => refetch()
 })
