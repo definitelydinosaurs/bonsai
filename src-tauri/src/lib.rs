@@ -14,7 +14,7 @@ struct State {
   data: Mutex<HashMap<String, Value>>,
 }
 
-pub fn write_file(file_name: &str, content: Value) -> Result<()> {
+fn write_file(file_name: &str, content: Value) -> Result<()> {
   let data = json!(content);
   File::create(file_name)?;
   fs::write(file_name, data.to_string())?;
@@ -53,7 +53,7 @@ fn sources_reducer(state: Value, event: &str, payload: &str) -> Value {
   state
 }
 
-pub fn read_file(file_name: &str, default_value: Value) -> Result<String> {
+fn read_file(file_name: &str, default_value: Value) -> Result<String> {
   let mut buffer = String::new();
   let mut file = match File::open(file_name) {
     Ok(file) => file,
