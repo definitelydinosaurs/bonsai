@@ -14,12 +14,18 @@ import { Text } from '~/reusables/ui/text'
 import Book from '~/component/Book'
 import Modal from '~/component/Modal'
 
+const handlePress = ({ setShowDetails }) => id => {
+  setShowDetails(true)
+}
+
 export default function Screen() {
   const { baseUrl } = useConfig()
   const { isDarkColorScheme } = useColorScheme()
   const queryClient = useQueryClient()
+
   const [text, setText] = useState('')
   const [showModal, setShowModal] = useState(false)
+  const [showDetails, setShowDetails] = useState(false)
 
   const { data: state = { sources: {} }, refetch: refetchState } = useQuery(initializeData)
   const { data = {}, isLoading, isSuccess, error, refetch: refetchBook } = useQuery(getBook(baseUrl, text))
@@ -61,7 +67,7 @@ export default function Screen() {
       <ScrollView contentContainerClassName='w-full grid grid-cols-3 gap-4' showsVerticalScrollIndicator={false}>
         { Object.keys(state.sources).map(source =>
           <View key={source} className='w-full justify-center items-center mb-4'>
-            <Book key={source} {...state.sources[source]} />
+            <Book key={source} {...state.sources[source]} onPress={handlePress({ setShowDetails })} />
             <Button variant='outline' className='w-full max-w-[256px] mt-4' onPress={() => deleteMutation.mutate(source)}>
               <Text>Delete</Text>
             </Button>
