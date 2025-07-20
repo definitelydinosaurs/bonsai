@@ -14,7 +14,7 @@ struct State {
   data: Mutex<HashMap<String, Value>>,
 }
 
-fn write_file(file_name: &str, content: Value) -> Result<()> {
+fn write_file(file_name: &str, content: &Value) -> Result<()> {
   let data = json!(content);
   File::create(file_name)?;
   fs::write(file_name, data.to_string())?;
@@ -58,7 +58,7 @@ fn read_file(file_name: &str, default_value: Value) -> Result<String> {
   let mut file = match File::open(file_name) {
     Ok(file) => file,
     Err(_) => {
-      write_file(file_name, default_value)?;
+      write_file(file_name, &default_value)?;
       File::open(file_name)?
     }
   };
@@ -111,6 +111,17 @@ fn sessions_reducer(state: Value, event: &str, payload: &str) -> Value {
   state
 }
 
+fn persist_state(app: &tauri::AppHandle, key: &str, value: &Value) {
+  let mut app_data_dir = app.path().app_data_dir().unwrap();
+  // if dev mode, set app data directory to ""
+  if cfg!(debug_assertions) {
+    app_data_dir = "".into();
+  }
+
+  let file_path = app_data_dir.join(format!("{}.json", key));
+  write_file(file_path.to_str().unwrap(), value).expect("Failed to write to file");
+}
+
 fn get_state_keys() -> HashMap<String, (Value, fn(Value, &str, &str) -> Value)> {
   let mut keys = HashMap::new();
 
@@ -125,17 +136,6 @@ fn get_state_keys() -> HashMap<String, (Value, fn(Value, &str, &str) -> Value)> 
 
 #[tauri::command]
 fn dispatch(app: tauri::AppHandle, event: String, payload: Option<String>, state: tauri::State<State>) -> String {
-  let mut app_data_dir = app.path().app_data_dir().unwrap();
-  println!("App data directory: {}", app_data_dir.display());
-
-  // if dev mode, set app data directory to ""
-  if cfg!(debug_assertions) {
-    println!("Running in debug mode, using empty app data directory");
-    app_data_dir = "".into();
-  } else {
-    println!("Running in production mode, using app data directory: {}", app_data_dir.display());
-  }
-
   let mut data = state.data.lock().unwrap();
   let state_keys = get_state_keys();
 
@@ -143,7 +143,7 @@ fn dispatch(app: tauri::AppHandle, event: String, payload: Option<String>, state
     if let Some((_initial_value, reducer)) = state_keys.get(key) {
       let updated_value = reducer(value.clone(), &event, &payload.as_deref().unwrap_or_default());
       *value = updated_value.clone();
-      write_file(app_data_dir.join(&format!("{}.json", key)).to_str().unwrap(), json!(updated_value)).expect("Failed to write to file");
+      persist_state(&app, key, &updated_value);
     }
   }
 
