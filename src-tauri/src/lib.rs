@@ -12,6 +12,7 @@ use uuid::Uuid;
 
 struct State {
   data: Mutex<HashMap<String, Value>>,
+  listeners: Mutex<Vec<fn(&HashMap<String, Value>)>>,
 }
 
 fn write_file(file_name: &str, content: &Value) -> Result<()> {
@@ -188,7 +189,7 @@ pub fn run() {
       }
       Ok(())
     })
-    .manage(State { data: Mutex::new(HashMap::new()) })
+    .manage(State { data: Mutex::new(HashMap::new()), listeners: Mutex::new(Vec::new()) })
     .invoke_handler(tauri::generate_handler![dispatch])
     .run(tauri::generate_context!())
     .expect("error while running tauri application");
