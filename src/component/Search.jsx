@@ -17,6 +17,7 @@ const Search = props => (
         returnKeyType='search'
       />
     </View>
+
     { props.isLoading && <Text className='w-full mt-4 text-center'>Loading...</Text> }
     { props.error && <Text className='w-full mt-4 text-center text-red-500'>{ props.error.message }</Text> }
     { props.isAdded && <Text className='w-full mt-4 text-center text-green-500'>Added</Text> }

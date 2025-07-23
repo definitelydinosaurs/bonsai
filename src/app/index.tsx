@@ -13,6 +13,7 @@ import { Text } from '~/reusables/ui/text'
 
 import Book from '~/component/Book'
 import Modal from '~/component/Modal'
+import Search from '~/component/Search'
 
 const handlePress = ({ setShowDetails }) => id => {
   setShowDetails(true)
@@ -51,18 +52,18 @@ export default function Screen() {
         <Text>Search</Text>
       </Button>
 
-      <Modal
-        {...{ book, error, isDarkColorScheme, isLoading, isSuccess, setText, text }}
-        isAdded={mutation.isSuccess}
-        isVisible={showModal}
-        isPending={mutation.isPending}
-        onSearch={() => handleSearch({ text, refetchBook })}
-        onClose={() => setShowModal(false)}
-        onPress={() => {
-          mutation.mutate(book)
-          setText('')
-        }}
-      />
+      <Modal {...{ isDarkColorScheme }} isVisible={showModal} onClose={() => setShowModal(false)}>
+        <Search
+          {...{ book, error, isLoading, isSuccess, setText, text }}
+          isAdded={mutation.isSuccess}
+          isPending={mutation.isPending}
+          onSearch={() => handleSearch({ text, refetchBook })}
+          onPress={() => {
+            mutation.mutate(book)
+            setText('')
+          }}
+        />
+      </Modal>
 
       <ScrollView contentContainerClassName='w-full grid grid-cols-3 gap-4' showsVerticalScrollIndicator={false}>
         { Object.keys(state.sources).map(source =>
