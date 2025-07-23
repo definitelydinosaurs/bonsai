@@ -12,7 +12,7 @@ use uuid::Uuid;
 
 struct State {
   data: Mutex<HashMap<String, Value>>,
-  listeners: Mutex<Vec<fn(&HashMap<String, Value>)>>,
+  listeners: Mutex<Vec<fn(app: &tauri::AppHandle, key: &str, value: &Value)>>,
 }
 
 fn write_file(file_name: &str, content: &Value) -> Result<()> {
@@ -172,6 +172,7 @@ pub fn run() {
 
       let state = app.state::<State>();
       let mut data = state.data.lock().unwrap();
+      let mut listeners = state.listeners.lock().unwrap();
 
       for (name, attributes) in get_state_keys().iter() {
           let (initial_state, _modify_fn) = attributes;
@@ -179,6 +180,8 @@ pub fn run() {
           let initial_json: Value = serde_json::from_str(&initial_data).unwrap();
           data.insert(name.to_string(), initial_json);
       }
+
+      listeners.push(persist_state as fn(&tauri::AppHandle, &str, & Value));
 
       if cfg!(debug_assertions) {
         app.handle().plugin(
