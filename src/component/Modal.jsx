@@ -1,10 +1,4 @@
-import { Modal as RNModal, Pressable, View } from 'react-native'
-
-import { Button } from '~/reusables/ui/button'
-import { Text } from '~/reusables/ui/text'
-import { Input } from '~/reusables/ui/input'
-
-import Book from '~/component/Book'
+import { Modal as RNModal, Pressable } from 'react-native'
 
 const Modal = props => (
   <RNModal
