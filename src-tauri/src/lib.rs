@@ -143,8 +143,12 @@ fn dispatch(app: tauri::AppHandle, event: String, payload: Option<String>, state
   for (key, value) in data.iter_mut() {
     if let Some((_initial_value, reducer)) = state_keys.get(key) {
       let updated_value = reducer(value.clone(), &event, &payload.as_deref().unwrap_or_default());
-      *value = updated_value.clone();
-      persist_state(&app, key, &updated_value);
+      if *value != updated_value {
+          *value = updated_value.clone();
+          for listener in state.listeners.lock().unwrap().iter() {
+            listener(&app, key, &updated_value);
+          }
+      }
     }
   }
 
