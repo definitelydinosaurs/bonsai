@@ -12,6 +12,7 @@ import { Button } from '~/reusables/ui/button'
 import { Text } from '~/reusables/ui/text'
 
 import Book from '~/component/Book'
+import BookDetails from '~/component/BookDetails'
 import Modal from '~/component/Modal'
 import Search from '~/component/Search'
 
@@ -25,7 +26,7 @@ export default function Screen() {
   const queryClient = useQueryClient()
 
   const [text, setText] = useState('')
-  const [showModal, setShowModal] = useState(false)
+  const [showSearch, setShowSearch] = useState(false)
   const [showDetails, setShowDetails] = useState(false)
 
   const { data: state = { sources: {} }, refetch: refetchState } = useQuery(initializeData)
@@ -48,11 +49,11 @@ export default function Screen() {
 
   return (
     <View className='flex-1 justify-start items-center gap-5 p-6'>
-      <Button variant='outline' onPress={() => setShowModal(true)}>
+      <Button variant='outline' onPress={() => setShowSearch(true)}>
         <Text>Search</Text>
       </Button>
 
-      <Modal {...{ isDarkColorScheme }} isVisible={showModal} onClose={() => setShowModal(false)}>
+      <Modal {...{ isDarkColorScheme }} isVisible={showSearch} onClose={() => setShowSearch(false)}>
         <Search
           {...{ book, error, isLoading, isSuccess, setText, text }}
           isAdded={mutation.isSuccess}
@@ -63,6 +64,10 @@ export default function Screen() {
             setText('')
           }}
         />
+      </Modal>
+
+      <Modal {...{ isDarkColorScheme }} isVisible={showDetails} onClose={() => setShowDetails(false)}>
+        <BookDetails />
       </Modal>
 
       <ScrollView contentContainerClassName='w-full grid grid-cols-3 gap-4' showsVerticalScrollIndicator={false}>
