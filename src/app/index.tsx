@@ -67,7 +67,7 @@ export default function Screen() {
       </Modal>
 
       <Modal {...{ isDarkColorScheme }} isVisible={showDetails} onClose={() => setShowDetails(false)}>
-        <BookDetails />
+        <BookDetails {...book} />
       </Modal>
 
       <ScrollView contentContainerClassName='w-full grid grid-cols-3 gap-4' showsVerticalScrollIndicator={false}>
