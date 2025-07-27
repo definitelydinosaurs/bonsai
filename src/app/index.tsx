@@ -16,7 +16,9 @@ import BookDetails from '~/component/BookDetails'
 import Modal from '~/component/Modal'
 import Search from '~/component/Search'
 
-const handlePress = ({ setShowDetails }) => id => {
+const handlePress = ({ refetchBook, setShowDetails, setText }) => id => {
+  setText(id)
+  refetchBook()
   setShowDetails(true)
 }
 
@@ -73,7 +75,7 @@ export default function Screen() {
       <ScrollView contentContainerClassName='w-full grid grid-cols-3 gap-4' showsVerticalScrollIndicator={false}>
         { Object.keys(state.sources).map(source =>
           <View key={source} className='w-full justify-center items-center mb-4'>
-            <Book key={source} {...state.sources[source]} onPress={handlePress({ setShowDetails })} />
+            <Book key={source} {...state.sources[source]} onPress={handlePress({ refetchBook, setShowDetails, setText })} />
             <Button variant='outline' className='w-full max-w-[256px] mt-4' onPress={() => deleteMutation.mutate(source)}>
               <Text>Delete</Text>
             </Button>
