@@ -16,10 +16,10 @@ import BookDetails from '~/component/BookDetails'
 import Modal from '~/component/Modal'
 import Search from '~/component/Search'
 
-const handlePress = ({ refetchBook, setShowDetails, setText }) => id => {
-  setText(id)
-  refetchBook()
-  setShowDetails(true)
+const handlePress = ({ refetchBook, setShowDetails, setText }) => async id => {
+  await setText(id)
+  await refetchBook()
+  await setShowDetails(true)
 }
 
 export default function Screen() {
