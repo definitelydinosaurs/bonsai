@@ -51,7 +51,7 @@ export default function Screen() {
 
   return (
     <View className='flex-1 justify-start items-center gap-5 p-6'>
-      <Button variant='outline' onPress={() => setShowSearch(true)}>
+      <Button variant='outline' className='px-[10%]' onPress={() => setShowSearch(true)}>
         <Text>Search</Text>
       </Button>
 
