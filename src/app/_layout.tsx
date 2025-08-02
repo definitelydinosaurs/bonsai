@@ -10,7 +10,6 @@ import { PortalHost } from '@rn-primitives/portal'
 
 import { NAV_THEME } from '~/lib/constants'
 import { useColorScheme } from '~/lib/useColorScheme'
-import { ThemeToggle } from '~/reusables/ThemeToggle'
 import { setAndroidNavigationBar } from '~/lib/android-navigation-bar'
 
 const LIGHT_THEME: Theme = { ...DefaultTheme, colors: NAV_THEME.light }
