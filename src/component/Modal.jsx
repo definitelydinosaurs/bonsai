@@ -9,6 +9,7 @@ const Modal = props => (
   >
     <Pressable
       className={`flex-1 bg-${props.isDarkColorScheme ? 'white' : 'black'}/50 justify-center items-center p-4`}
+      // className='flex-1 bg-white/50 justify-center items-center p-4'
       onPress={props.onClose}
     >
       <Pressable
