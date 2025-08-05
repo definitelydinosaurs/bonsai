@@ -16,6 +16,11 @@ import BookDetails from '~/component/BookDetails'
 import Modal from '~/component/Modal'
 import Search from '~/component/Search'
 
+const handleClose = ({ resetBook, setShowDetails }) => () => {
+  setShowDetails(false)
+  resetBook()
+}
+
 const handlePress = ({ refetchBook, setShowDetails, setText }) => async id => {
   await setText(id)
   await refetchBook()
@@ -32,7 +37,7 @@ export default function Screen() {
   const [showDetails, setShowDetails] = useState(false)
 
   const { data: state = { sources: {} }, refetch: refetchState } = useQuery(initializeData)
-  const { data = {}, isLoading, isSuccess, error, refetch: refetchBook } = useQuery(getBook(baseUrl, text))
+  const { data = {}, isLoading, isSuccess, error, refetch: refetchBook, reset: resetBook } = useQuery(getBook(baseUrl, text))
   const mutation = useMutation(addBook({ setText, refetch: refetchState }))
   const deleteMutation = useMutation(deleteBook(refetchState))
 
@@ -68,7 +73,7 @@ export default function Screen() {
         />
       </Modal>
 
-      <Modal {...{ isDarkColorScheme }} isVisible={showDetails} onClose={() => setShowDetails(false)}>
+      <Modal {...{ isDarkColorScheme }} isVisible={showDetails} onClose={handleClose({ resetBook, setShowDetails })}>
         <BookDetails {...book} />
       </Modal>
 
