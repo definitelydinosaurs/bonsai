@@ -7,7 +7,7 @@ const Book = props => (
     <Image
       onPress={() => props.onPress(props.isbn)}
       className='w-full max-w-[65%] min-w-[65%] aspect-[2/3] mb-4'
-      source={{ uri: props.cover.length > 0 ? props.cover : 'https://i.imgur.com/of4baFL.png' }}
+      source={{ uri: props.cover || 'https://i.imgur.com/of4baFL.png' }}
     />
     <Text
       onPress={() => props.onPress(props.isbn)}

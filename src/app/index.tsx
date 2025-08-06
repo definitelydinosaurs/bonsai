@@ -16,9 +16,9 @@ import BookDetails from '~/component/BookDetails'
 import Modal from '~/component/Modal'
 import Search from '~/component/Search'
 
-const handleClose = ({ resetBook, setShowDetails }) => () => {
+const handleClose = ({ setBook, setShowDetails }) => () => {
   setShowDetails(false)
-  resetBook()
+  setBook({})
 }
 
 const handlePress = ({ refetchBook, setShowDetails, setText }) => async id => {
@@ -35,14 +35,17 @@ export default function Screen() {
   const [text, setText] = useState('')
   const [showSearch, setShowSearch] = useState(false)
   const [showDetails, setShowDetails] = useState(false)
+  const [book, setBook] = useState({})
 
   const { data: state = { sources: {} }, refetch: refetchState } = useQuery(initializeData)
-  const { data = {}, isLoading, isSuccess, error, refetch: refetchBook, reset: resetBook } = useQuery(getBook(baseUrl, text))
+  const { data = {}, isLoading, isSuccess, error, refetch: refetchBook } = useQuery(getBook(baseUrl, text))
   const mutation = useMutation(addBook({ setText, refetch: refetchState }))
   const deleteMutation = useMutation(deleteBook(refetchState))
 
-  const artifact = data[Object.keys(data)[0]]
-  const book = extractBook({ ...(artifact || {}), isbn: text, cover: artifact?.cover?.large || '' })
+  useEffect(() => {
+    const artifact = data[Object.keys(data)[0]]
+    setBook(extractBook({ ...(artifact || {}), isbn: text, cover: artifact?.cover?.large || '' }))
+  }, [data])
 
   useEffect(() => {
     if (mutation.isSuccess) {
@@ -73,8 +76,8 @@ export default function Screen() {
         />
       </Modal>
 
-      <Modal {...{ isDarkColorScheme }} isVisible={showDetails} onClose={handleClose({ resetBook, setShowDetails })}>
-        <BookDetails {...book} />
+      <Modal {...{ isDarkColorScheme }} isVisible={showDetails} onClose={handleClose({ setBook, setShowDetails })}>
+        { book && <BookDetails {...book} /> }
       </Modal>
 
       <ScrollView contentContainerClassName='w-full grid grid-cols-3 gap-4' showsVerticalScrollIndicator={false}>
