@@ -16,8 +16,9 @@ import BookDetails from '~/component/BookDetails'
 import Modal from '~/component/Modal'
 import Search from '~/component/Search'
 
-const handleClose = ({ setBook, setShowDetails }) => () => {
+const handleClose = ({ setBook, setShowDetails, setText }) => () => {
   setShowDetails(false)
+  setText('')
   setBook({})
 }
 
@@ -76,7 +77,7 @@ export default function Screen() {
         />
       </Modal>
 
-      <Modal {...{ isDarkColorScheme }} isVisible={showDetails} onClose={handleClose({ setBook, setShowDetails })}>
+      <Modal {...{ isDarkColorScheme }} isVisible={showDetails} onClose={handleClose({ setBook, setShowDetails, setText })}>
         { book && <BookDetails {...book} /> }
       </Modal>
 
