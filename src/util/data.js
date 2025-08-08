@@ -1,10 +1,11 @@
-export const extractBook = ({ isbn, title, subtitle, authors = [], cover, description = '' }) => ({
+export const extractBook = ({ isbn, title, subtitle, authors = [], cover, description = '', publish_date }) => ({
   isbn,
   cover,
   title,
   subtitle,
   authors: authors.map(author => author.name),
-  description
+  description,
+  publishDate: publish_date
 })
 
 export const isDOI = string => {
