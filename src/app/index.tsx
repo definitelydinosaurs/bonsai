@@ -46,7 +46,7 @@ export default function Screen() {
   useEffect(() => {
     const artifact = data[Object.keys(data)[0]]
     setBook(extractBook({ ...(artifact || {}), isbn: text, cover: artifact?.cover?.large || '' }))
-  }, [data])
+  }, [isLoading])
 
   useEffect(() => {
     if (mutation.isSuccess) {
