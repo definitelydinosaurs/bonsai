@@ -11,6 +11,7 @@ const BookDetails = ({ authors = [], ...props }) => (
     <Text className='text-lg font-bold text-center'>{ props.title }</Text>
     { props.subtitle && <Text className='text-lg font-bold text-center'>{ props.subtitle }</Text> }
     <Text className='text-lg font-bold text-center'>{ authors.join(', ') }</Text>
+    <Text className='text-center'>Published:{ props.publishDate }</Text>
   </View>
 )
 
