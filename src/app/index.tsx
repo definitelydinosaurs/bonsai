@@ -3,7 +3,7 @@ import { ScrollView, View } from 'react-native'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 import useConfig from '~/hook/useConfig'
-import { handleSearch } from '~/handler/source'
+import { handleClose, handleSearch } from '~/handler/source'
 import { extractBook } from '~/util/data'
 import { addBook, deleteBook, getBook, initializeData } from '~/query/source'
 
@@ -15,12 +15,6 @@ import Book from '~/component/Book'
 import BookDetails from '~/component/BookDetails'
 import Modal from '~/component/Modal'
 import Search from '~/component/Search'
-
-const handleClose = ({ setBook, setShowDetails, setText }) => () => {
-  setShowDetails(false)
-  setText('')
-  setBook({})
-}
 
 const handlePress = ({ refetchBook, setShowDetails, setText }) => async id => {
   await setText(id)
