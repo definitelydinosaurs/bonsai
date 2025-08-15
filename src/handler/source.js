@@ -9,3 +9,9 @@ export const handleClose = ({ setBook, setShowDetails, setText }) => () => {
   setText('')
   setBook({})
 }
+
+export const handlePress = ({ refetchBook, setShowDetails, setText }) => async id => {
+  await setText(id)
+  await refetchBook()
+  await setShowDetails(true)
+}
