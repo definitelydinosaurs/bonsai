@@ -136,8 +136,26 @@ fn get_state_keys() -> HashMap<String, (Value, fn(Value, &str, &str) -> Value)> 
   keys
 }
 
-const fn create_reducer_fn() -> fn(tauri::AppHandle, String, Option<String>, tauri::State<State>) -> String {
-  dispatch
+fn create_reducer_fn() -> impl Fn(tauri::AppHandle, String, Option<String>, tauri::State<State>) -> String {
+  let state_keys = get_state_keys();
+
+  move |app, event, payload, mut state| {
+    let mut data = state.data.lock().unwrap();
+
+    for (key, value) in data.iter_mut() {
+      if let Some((_initial_value, reducer)) = state_keys.get(key) {
+        let updated_value = reducer(value.clone(), &event, &payload.as_deref().unwrap_or_default());
+        if *value != updated_value {
+            *value = updated_value.clone();
+            for listener in state.listeners.lock().unwrap().iter() {
+              listener(key, &updated_value);
+            }
+        }
+      }
+    }
+
+    serde_json::to_string(&*data).unwrap()
+  }
 }
 
 #[tauri::command]
