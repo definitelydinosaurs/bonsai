@@ -197,7 +197,7 @@ pub fn run() {
           data.insert(name.to_string(), initial_json);
       }
 
-      listeners.push(persist_state as fn(&tauri::AppHandle, &str, & Value));
+      listeners.push(Box::new(create_persist_fn(&app.handle())));
 
       if cfg!(debug_assertions) {
         app.handle().plugin(
