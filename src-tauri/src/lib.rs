@@ -12,7 +12,7 @@ use uuid::Uuid;
 
 struct State {
   data: Mutex<HashMap<String, Value>>,
-  listeners: Mutex<Vec<fn(app: &tauri::AppHandle, key: &str, value: &Value)>>,
+  listeners: Mutex<Vec<Box<dyn Fn(&str, &Value) + Send + Sync>>>,
 }
 
 fn write_file(file_name: &str, content: &Value) -> Result<()> {
@@ -158,7 +158,7 @@ fn dispatch(app: tauri::AppHandle, event: String, payload: Option<String>, state
       if *value != updated_value {
           *value = updated_value.clone();
           for listener in state.listeners.lock().unwrap().iter() {
-            listener(&app, key, &updated_value);
+            listener(key, &updated_value);
           }
       }
     }
