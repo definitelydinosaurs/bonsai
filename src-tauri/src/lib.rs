@@ -112,17 +112,6 @@ fn sessions_reducer(state: Value, event: &str, payload: &str) -> Value {
   state
 }
 
-fn persist_state(app: &tauri::AppHandle, key: &str, value: &Value) {
-  let mut app_data_dir = app.path().app_data_dir().unwrap();
-  // if dev mode, set app data directory to ""
-  if cfg!(debug_assertions) {
-    app_data_dir = "".into();
-  }
-
-  let file_path = app_data_dir.join(format!("{}.json", key));
-  write_file(file_path.to_str().unwrap(), value).expect("Failed to write to file");
-}
-
 fn create_persist_fn(app: &tauri::AppHandle) -> impl Fn(&str, &Value) {
   let mut app_data_dir = app.path().app_data_dir().unwrap();
   if cfg!(debug_assertions) {
