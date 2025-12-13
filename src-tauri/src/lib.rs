@@ -68,6 +68,10 @@ fn read_file(file_name: &str, default_value: Value) -> Result<String> {
   Ok(buffer)
 }
 
+fn payload_identity(_state: Value, _event: &str, payload: &str) -> Value {
+  serde_json::from_str(payload).unwrap_or(json!({}))
+}
+
 fn state_identity(state: Value, event: &str, payload: &str) -> Value {
   // This function is a placeholder for state that does not change
   // It simply returns the state as is, without modification
