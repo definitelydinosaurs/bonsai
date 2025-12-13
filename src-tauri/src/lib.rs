@@ -136,8 +136,7 @@ fn get_state_keys() -> HashMap<String, (Value, fn(Value, &str, &str) -> Value)> 
   keys
 }
 
-fn create_reducer_fn() -> impl Fn(tauri::AppHandle, String, Option<String>, tauri::State<State>) -> String {
-  let state_keys = get_state_keys();
+fn create_reducer_fn(state_keys: HashMap<String, (Value, fn(Value, &str, &str) -> Value)>) -> impl Fn(tauri::AppHandle, String, Option<String>, tauri::State<State>) -> String {
 
   move |app, event, payload, mut state| {
     let mut data = state.data.lock().unwrap();
