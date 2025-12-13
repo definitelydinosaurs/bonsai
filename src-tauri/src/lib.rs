@@ -140,7 +140,7 @@ fn get_state_keys() -> HashMap<String, (Value, fn(Value, &str, &str) -> Value)> 
   keys
 }
 
-fn dispatch_w_data(event: String, payload: Option<String>, state: State) -> String {
+fn dispatch_w_data(event: String, payload: Option<String>, state: Mutex<HashMap<String, Value>>) -> String {
   event
 }
 
