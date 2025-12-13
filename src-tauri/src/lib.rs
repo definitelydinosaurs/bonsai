@@ -136,6 +136,10 @@ fn get_state_keys() -> HashMap<String, (Value, fn(Value, &str, &str) -> Value)> 
   keys
 }
 
+fn dispatch_w_data(event: String, payload: Option<String>, state: tauri::State<State>) -> String {
+  event
+}
+
 fn create_reducer_fn(state_keys: HashMap<String, (Value, fn(Value, &str, &str) -> Value)>) -> impl Fn(tauri::AppHandle, String, Option<String>, tauri::State<State>) -> String {
 
   move |app, event, payload, mut state| {
