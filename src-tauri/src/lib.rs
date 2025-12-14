@@ -22,6 +22,31 @@ fn write_file(file_name: &str, content: &Value) -> Result<()> {
   Ok(())
 }
 
+fn read_file(file_name: &str, default_value: Value) -> Result<String> {
+  let mut buffer = String::new();
+  let mut file = match File::open(file_name) {
+    Ok(file) => file,
+    Err(_) => {
+      write_file(file_name, &default_value)?;
+      File::open(file_name)?
+    }
+  };
+
+  file.read_to_string(&mut buffer)?;
+  Ok(buffer)
+}
+
+fn payload_identity(_state: Value, _event: &str, payload: &str) -> Value {
+  serde_json::from_str(payload).unwrap_or(json!({}))
+}
+
+fn state_identity(state: Value, event: &str, payload: &str) -> Value {
+  // This function is a placeholder for state that does not change
+  // It simply returns the state as is, without modification
+  println!("State identity called with event: {}, payload: {}", event, payload);
+  state
+}
+
 fn sources_reducer(state: Value, event: &str, payload: &str) -> Value {
   let mut new_state = state.clone();
   match event {
@@ -51,31 +76,6 @@ fn sources_reducer(state: Value, event: &str, payload: &str) -> Value {
       println!("Unknown command: {}", event);
     }
   }
-  state
-}
-
-fn read_file(file_name: &str, default_value: Value) -> Result<String> {
-  let mut buffer = String::new();
-  let mut file = match File::open(file_name) {
-    Ok(file) => file,
-    Err(_) => {
-      write_file(file_name, &default_value)?;
-      File::open(file_name)?
-    }
-  };
-
-  file.read_to_string(&mut buffer)?;
-  Ok(buffer)
-}
-
-fn payload_identity(_state: Value, _event: &str, payload: &str) -> Value {
-  serde_json::from_str(payload).unwrap_or(json!({}))
-}
-
-fn state_identity(state: Value, event: &str, payload: &str) -> Value {
-  // This function is a placeholder for state that does not change
-  // It simply returns the state as is, without modification
-  println!("State identity called with event: {}, payload: {}", event, payload);
   state
 }
 
