@@ -13,6 +13,7 @@ use uuid::Uuid;
 struct State {
     data: Mutex<HashMap<String, Value>>,
     listeners: Mutex<Vec<Box<dyn Fn(&str, &Value) + Send + Sync>>>,
+    reducers: HashMap<String, (Value, fn(Value, &str, &str) -> Value)>
 }
 
 fn write_file(file_name: &str, content: &Value) -> Result<()> {
@@ -292,6 +293,7 @@ pub fn run() {
         .manage(State {
             data: Mutex::new(HashMap::new()),
             listeners: Mutex::new(Vec::new()),
+            reducers: get_state_keys(),
         })
         .invoke_handler(tauri::generate_handler![dispatch])
         .run(tauri::generate_context!())
