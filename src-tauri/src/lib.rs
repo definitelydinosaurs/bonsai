@@ -216,7 +216,7 @@ fn dispatch(
     state: tauri::State<State>,
 ) -> String {
     let mut data = state.data.lock().unwrap();
-    let state_keys = get_state_keys();
+    let state_keys = state.reducers.clone();
 
     for (key, value) in data.iter_mut() {
         if let Some((_initial_value, reducer)) = state_keys.get(key) {
