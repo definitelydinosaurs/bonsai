@@ -174,40 +174,6 @@ fn get_state_keys() -> HashMap<String, (Value, fn(Value, &str, &str) -> Value)> 
     keys
 }
 
-fn dispatch_w_data(
-    event: String,
-    payload: Option<String>,
-    state: Mutex<HashMap<String, Value>>,
-) -> String {
-    event
-}
-
-fn create_dispatch_fn(
-    state_keys: HashMap<String, (Value, fn(Value, &str, &str) -> Value)>,
-) -> impl Fn(tauri::AppHandle, String, Option<String>, tauri::State<State>) -> String {
-    move |app, event, payload, mut state| {
-        let mut data = state.data.lock().unwrap();
-
-        for (key, value) in data.iter_mut() {
-            if let Some((_initial_value, reducer)) = state_keys.get(key) {
-                let updated_value = reducer(
-                    value.clone(),
-                    &event,
-                    &payload.as_deref().unwrap_or_default(),
-                );
-                if *value != updated_value {
-                    *value = updated_value.clone();
-                    for listener in state.listeners.lock().unwrap().iter() {
-                        listener(key, &updated_value);
-                    }
-                }
-            }
-        }
-
-        serde_json::to_string(&*data).unwrap()
-    }
-}
-
 #[tauri::command]
 fn dispatch(
     app: tauri::AppHandle,
