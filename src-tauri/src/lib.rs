@@ -174,6 +174,10 @@ fn get_state_keys() -> HashMap<String, (Value, fn(Value, &str, &str) -> Value)> 
     keys
 }
 
+fn shadow_dispath(event: String, payload: Option<String>, state: HashMap<String, Value>, reducers: HashMap<String, (Value, fn(Value, &str, &str) -> Value)>) -> String {
+    event
+}
+
 #[tauri::command]
 fn dispatch(
     app: tauri::AppHandle,
