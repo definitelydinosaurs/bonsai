@@ -174,7 +174,7 @@ fn get_state_keys() -> HashMap<String, (Value, fn(Value, &str, &str) -> Value)> 
     keys
 }
 
-fn shadow_dispath(event: String, payload: Option<String>, state: HashMap<String, Value>, reducers: HashMap<String, (Value, fn(Value, &str, &str) -> Value)>, listeners: Vec<Box<dyn Fn(&str, &Value) + Send + Sync>>) -> String {
+fn shadow_dispath(event: String, payload: Option<String>, mut data: HashMap<String, Value>, reducers: HashMap<String, (Value, fn(Value, &str, &str) -> Value)>, listeners: Vec<Box<dyn Fn(&str, &Value) + Send + Sync>>) -> String {
     event
 }
 
