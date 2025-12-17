@@ -13,7 +13,7 @@ use uuid::Uuid;
 struct State {
     data: Mutex<HashMap<String, Value>>,
     listeners: Mutex<Vec<Box<dyn Fn(&str, &Value) + Send + Sync>>>,
-    reducers: HashMap<String, (Value, fn(Value, &str, &str) -> Value)>
+    reducers: HashMap<String, (Value, fn(Value, &str, &str) -> Value)>,
 }
 
 fn write_file(file_name: &str, content: &Value) -> Result<()> {
@@ -174,8 +174,14 @@ fn get_state_keys() -> HashMap<String, (Value, fn(Value, &str, &str) -> Value)> 
     keys
 }
 
-fn shadow_dispath(event: String, payload: Option<String>, mut data: HashMap<String, Value>, reducers: HashMap<String, (Value, fn(Value, &str, &str) -> Value)>, listeners: Vec<Box<dyn Fn(&str, &Value) + Send + Sync>>) -> String {
-        for (key, value) in data.iter_mut() {
+fn shadow_dispath(
+    event: String,
+    payload: Option<String>,
+    mut data: HashMap<String, Value>,
+    reducers: HashMap<String, (Value, fn(Value, &str, &str) -> Value)>,
+    listeners: Vec<Box<dyn Fn(&str, &Value) + Send + Sync>>,
+) -> String {
+    for (key, value) in data.iter_mut() {
         if let Some((_initial_value, reducer)) = reducers.get(key) {
             let updated_value = reducer(
                 value.clone(),
