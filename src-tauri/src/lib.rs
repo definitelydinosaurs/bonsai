@@ -175,7 +175,23 @@ fn get_state_keys() -> HashMap<String, (Value, fn(Value, &str, &str) -> Value)> 
 }
 
 fn shadow_dispath(event: String, payload: Option<String>, mut data: HashMap<String, Value>, reducers: HashMap<String, (Value, fn(Value, &str, &str) -> Value)>, listeners: Vec<Box<dyn Fn(&str, &Value) + Send + Sync>>) -> String {
-    event
+        for (key, value) in data.iter_mut() {
+        if let Some((_initial_value, reducer)) = reducers.get(key) {
+            let updated_value = reducer(
+                value.clone(),
+                &event,
+                &payload.as_deref().unwrap_or_default(),
+            );
+            if *value != updated_value {
+                *value = updated_value.clone();
+                for listener in listeners.iter() {
+                    listener(key, &updated_value);
+                }
+            }
+        }
+    }
+
+    serde_json::to_string(&data).unwrap()
 }
 
 #[tauri::command]
