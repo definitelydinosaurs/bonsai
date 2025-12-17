@@ -198,7 +198,7 @@ fn dispatch(
             );
             if *value != updated_value {
                 *value = updated_value.clone();
-                for listener in state.listeners.lock().unwrap().iter() {
+                for listener in listeners.iter() {
                     listener(key, &updated_value);
                 }
             }
