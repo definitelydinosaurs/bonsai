@@ -14,7 +14,7 @@ struct State {
     data: Mutex<HashMap<String, Value>>,
     listeners: Mutex<Vec<Box<dyn Fn(&str, &Value) + Send + Sync>>>,
     reducers: HashMap<String, (Value, fn(Value, &str, &str) -> Value)>,
-    consume: fn(String, Option<String>, &mut HashMap<String, Value>, &HashMap<String, (Value, fn(Value, &str, &str) -> Value)>, &[Box<dyn Fn(&str, &Value) + Send + Sync>]) -> (),
+    consume: fn(String, Option<String>, &mut HashMap<String, Value>, &HashMap<String, (Value, fn(Value, &str, &str) -> Value)>, &[Box<dyn Fn(&str, &Value) + Send + Sync>]) -> String,
 }
 
 fn write_file(file_name: &str, content: &Value) -> Result<()> {
@@ -181,7 +181,7 @@ fn consume(
     data: &mut HashMap<String, Value>,
     reducers: &HashMap<String, (Value, fn(Value, &str, &str) -> Value)>,
     listeners: &[Box<dyn Fn(&str, &Value) + Send + Sync>],
-) -> () {
+) -> String {
     for (key, value) in data.iter_mut() {
         if let Some((_initial_value, reducer)) = reducers.get(key) {
             let updated_value = reducer(
@@ -198,7 +198,7 @@ fn consume(
         }
     }
 
-    serde_json::to_string(&data).unwrap()
+    serde_json::to_string(&*data).unwrap()
 }
 
 #[tauri::command]
@@ -212,23 +212,15 @@ fn dispatch(
     let state_keys = &state.reducers;
     let listeners = state.listeners.lock().unwrap();
 
-    for (key, value) in data.iter_mut() {
-        if let Some((_initial_value, reducer)) = state_keys.get(key) {
-            let updated_value = reducer(
-                value.clone(),
-                &event,
-                &payload.as_deref().unwrap_or_default(),
-            );
-            if *value != updated_value {
-                *value = updated_value.clone();
-                for listener in listeners.iter() {
-                    listener(key, &updated_value);
-                }
-            }
-        }
-    }
+    (state.consume)(
+        event,
+        payload,
+        &mut data,
+        state_keys,
+        &listeners,
+    )
 
-    serde_json::to_string(&*data).unwrap()
+    // serde_json::to_string(&*data).unwrap()
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
