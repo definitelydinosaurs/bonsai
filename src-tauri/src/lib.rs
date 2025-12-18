@@ -14,7 +14,7 @@ struct State {
     data: Mutex<HashMap<String, Value>>,
     listeners: Mutex<Vec<Box<dyn Fn(&str, &Value) + Send + Sync>>>,
     reducers: HashMap<String, (Value, fn(Value, &str, &str) -> Value)>,
-    consume: fn(String, Option<String>, HashMap<String, Value>, HashMap<String, (Value, fn(Value, &str, &str) -> Value)>, Vec<Box<dyn Fn(&str, &Value) + Send + Sync>>) -> String,
+    consume: fn(String, Option<String>, HashMap<String, Value>, HashMap<String, (Value, fn(Value, &str, &str) -> Value)>, &[Box<dyn Fn(&str, &Value) + Send + Sync>]) -> String,
 }
 
 fn write_file(file_name: &str, content: &Value) -> Result<()> {
@@ -180,7 +180,7 @@ fn consume(
     payload: Option<String>,
     mut data: HashMap<String, Value>,
     reducers: HashMap<String, (Value, fn(Value, &str, &str) -> Value)>,
-    listeners: Vec<Box<dyn Fn(&str, &Value) + Send + Sync>>,
+    listeners: &[Box<dyn Fn(&str, &Value) + Send + Sync>],
 ) -> String {
     for (key, value) in data.iter_mut() {
         if let Some((_initial_value, reducer)) = reducers.get(key) {
