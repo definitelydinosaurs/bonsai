@@ -14,7 +14,7 @@ struct State {
     data: Mutex<HashMap<String, Value>>,
     listeners: Mutex<Vec<Box<dyn Fn(&str, &Value) + Send + Sync>>>,
     reducers: HashMap<String, (Value, fn(Value, &str, &str) -> Value)>,
-    consume: fn(String, Option<String>, HashMap<String, Value>, HashMap<String, (Value, fn(Value, &str, &str) -> Value)>, &[Box<dyn Fn(&str, &Value) + Send + Sync>]) -> String,
+    consume: fn(String, Option<String>, &mut HashMap<String, Value>, &HashMap<String, (Value, fn(Value, &str, &str) -> Value)>, &[Box<dyn Fn(&str, &Value) + Send + Sync>]) -> (),
 }
 
 fn write_file(file_name: &str, content: &Value) -> Result<()> {
@@ -178,10 +178,10 @@ fn get_state_keys() -> HashMap<String, (Value, fn(Value, &str, &str) -> Value)> 
 fn consume(
     event: String,
     payload: Option<String>,
-    mut data: HashMap<String, Value>,
-    reducers: HashMap<String, (Value, fn(Value, &str, &str) -> Value)>,
+    data: &mut HashMap<String, Value>,
+    reducers: &HashMap<String, (Value, fn(Value, &str, &str) -> Value)>,
     listeners: &[Box<dyn Fn(&str, &Value) + Send + Sync>],
-) -> String {
+) -> () {
     for (key, value) in data.iter_mut() {
         if let Some((_initial_value, reducer)) = reducers.get(key) {
             let updated_value = reducer(
@@ -209,7 +209,7 @@ fn dispatch(
     state: tauri::State<State>,
 ) -> String {
     let mut data = state.data.lock().unwrap();
-    let state_keys = state.reducers.clone();
+    let state_keys = &state.reducers;
     let listeners = state.listeners.lock().unwrap();
 
     for (key, value) in data.iter_mut() {
