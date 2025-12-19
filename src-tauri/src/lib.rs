@@ -215,8 +215,6 @@ fn dispatch(
         state_keys,
         &listeners,
     )
-
-    // serde_json::to_string(&*data).unwrap()
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
