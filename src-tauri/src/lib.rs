@@ -1,4 +1,3 @@
-
 use std::collections::HashMap;
 use std::fs::{self, create_dir_all, File};
 use std::io::prelude::*;
@@ -11,7 +10,7 @@ use tauri::Manager;
 use uuid::Uuid;
 
 mod state;
-use state::State;
+use state::{consume, State};
 
 fn write_file(file_name: &str, content: &Value) -> Result<()> {
     let data = json!(content);
@@ -169,32 +168,6 @@ fn get_state_keys() -> HashMap<String, (Value, fn(Value, &str, &str) -> Value)> 
     );
 
     keys
-}
-
-fn consume(
-    event: String,
-    payload: Option<String>,
-    data: &mut HashMap<String, Value>,
-    reducers: &HashMap<String, (Value, fn(Value, &str, &str) -> Value)>,
-    listeners: &[Box<dyn Fn(&str, &Value) + Send + Sync>],
-) -> String {
-    for (key, value) in data.iter_mut() {
-        if let Some((_initial_value, reducer)) = reducers.get(key) {
-            let updated_value = reducer(
-                value.clone(),
-                &event,
-                &payload.as_deref().unwrap_or_default(),
-            );
-            if *value != updated_value {
-                *value = updated_value.clone();
-                for listener in listeners.iter() {
-                    listener(key, &updated_value);
-                }
-            }
-        }
-    }
-
-    serde_json::to_string(&*data).unwrap()
 }
 
 #[tauri::command]
