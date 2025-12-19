@@ -1,21 +1,17 @@
+
 use std::collections::HashMap;
 use std::fs::{self, create_dir_all, File};
 use std::io::prelude::*;
 use std::io::Result;
+use std::sync::Mutex;
 use std::time::{SystemTime, UNIX_EPOCH};
 
 use serde_json::{json, Value};
-use std::sync::Mutex;
-use tauri::path::PathResolver;
 use tauri::Manager;
 use uuid::Uuid;
 
-struct State {
-    data: Mutex<HashMap<String, Value>>,
-    listeners: Mutex<Vec<Box<dyn Fn(&str, &Value) + Send + Sync>>>,
-    reducers: HashMap<String, (Value, fn(Value, &str, &str) -> Value)>,
-    consume: fn(String, Option<String>, &mut HashMap<String, Value>, &HashMap<String, (Value, fn(Value, &str, &str) -> Value)>, &[Box<dyn Fn(&str, &Value) + Send + Sync>]) -> String,
-}
+mod state;
+use state::State;
 
 fn write_file(file_name: &str, content: &Value) -> Result<()> {
     let data = json!(content);
