@@ -151,13 +151,7 @@ fn dispatch(
     let state_keys = &state.reducers;
     let listeners = state.listeners.lock().unwrap();
 
-    (state.consume)(
-        event,
-        payload,
-        &mut data,
-        state_keys,
-        &listeners,
-    )
+    (state.consume)(event, payload, &mut data, state_keys, &listeners)
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
