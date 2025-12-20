@@ -217,8 +217,9 @@ pub fn run() {
             let state = app.state::<State>();
             let mut data = state.data.lock().unwrap();
             let mut listeners = state.listeners.lock().unwrap();
+            let reducers = state.reducers.clone();
 
-            for (name, attributes) in get_state_keys().iter() {
+            for (name, attributes) in reducers.iter() {
                 let (initial_state, _modify_fn) = attributes;
                 let initial_data = read_file(
                     app_data_dir
