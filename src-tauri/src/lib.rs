@@ -140,36 +140,6 @@ fn create_persist_fn(app: &tauri::AppHandle) -> impl Fn(&str, &Value) {
     }
 }
 
-fn get_state_keys() -> HashMap<String, (Value, fn(Value, &str, &str) -> Value)> {
-    let mut keys = HashMap::new();
-
-    keys.insert(
-        "sources".to_string(),
-        (json!({}), sources_reducer as fn(Value, &str, &str) -> Value),
-    );
-    keys.insert(
-        "sessions".to_string(),
-        (json!({}), state_identity as fn(Value, &str, &str) -> Value),
-    );
-    keys.insert(
-        "learnings".to_string(),
-        (json!({}), state_identity as fn(Value, &str, &str) -> Value),
-    );
-    keys.insert(
-        "settings".to_string(),
-        (
-            json!({}),
-            settings_reducer as fn(Value, &str, &str) -> Value,
-        ),
-    );
-    keys.insert(
-        "collections".to_string(),
-        (json!({}), state_identity as fn(Value, &str, &str) -> Value),
-    );
-
-    keys
-}
-
 #[tauri::command]
 fn dispatch(
     app: tauri::AppHandle,
