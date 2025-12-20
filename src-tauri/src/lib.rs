@@ -246,7 +246,31 @@ pub fn run() {
         .manage(State {
             data: Mutex::new(HashMap::new()),
             listeners: Mutex::new(Vec::new()),
-            reducers: get_state_keys(),
+            reducers: HashMap::from([
+                (
+                    "sources".to_string(),
+                    (json!({}), sources_reducer as fn(Value, &str, &str) -> Value),
+                ),
+                (
+                    "sessions".to_string(),
+                    (json!({}), state_identity as fn(Value, &str, &str) -> Value),
+                ),
+                (
+                    "learnings".to_string(),
+                    (json!({}), state_identity as fn(Value, &str, &str) -> Value),
+                ),
+                (
+                    "settings".to_string(),
+                    (
+                        json!({}),
+                        settings_reducer as fn(Value, &str, &str) -> Value,
+                    ),
+                ),
+                (
+                    "collections".to_string(),
+                    (json!({}), state_identity as fn(Value, &str, &str) -> Value),
+                ),
+            ]),
             consume: consume,
         })
         .invoke_handler(tauri::generate_handler![dispatch])
