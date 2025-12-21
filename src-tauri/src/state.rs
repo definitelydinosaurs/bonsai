@@ -14,14 +14,14 @@ impl Machine {
         reducers: HashMap<String, (Value, fn(Value, &str, &str) -> Value)>,
         listeners: Mutex<Vec<Box<dyn Fn(&str, &Value) + Send + Sync>>>,
     ) -> Self {
-        Self { data, reducers, listeners }
+        Self {
+            data,
+            reducers,
+            listeners,
+        }
     }
 
-    pub fn consume(
-        &mut self,
-        event: String,
-        payload: Option<String>,
-    ) -> String {
+    pub fn consume(&mut self, event: String, payload: Option<String>) -> String {
         for (key, value) in self.data.iter_mut() {
             if let Some((_initial_value, reducer)) = self.reducers.get(key) {
                 let updated_value = reducer(
