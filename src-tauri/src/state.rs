@@ -2,6 +2,11 @@ use serde_json::Value;
 use std::collections::HashMap;
 use std::sync::Mutex;
 
+pub struct Machine {
+    pub data: HashMap<String, Value>,
+    pub reducers: HashMap<String, (Value, fn(Value, &str, &str) -> Value)>,
+}
+
 pub struct State {
     pub data: Mutex<HashMap<String, Value>>,
     pub listeners: Mutex<Vec<Box<dyn Fn(&str, &Value) + Send + Sync>>>,
