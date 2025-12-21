@@ -7,6 +7,40 @@ pub struct Machine {
     pub reducers: HashMap<String, (Value, fn(Value, &str, &str) -> Value)>,
 }
 
+impl Machine {
+    pub fn new(
+        data: HashMap<String, Value>,
+        reducers: HashMap<String, (Value, fn(Value, &str, &str) -> Value)>,
+    ) -> Self {
+        Self { data, reducers }
+    }
+
+    pub fn consume(
+        &mut self,
+        event: String,
+        payload: Option<String>,
+        listeners: &[Box<dyn Fn(&str, &Value) + Send + Sync>],
+    ) -> String {
+        for (key, value) in self.data.iter_mut() {
+            if let Some((_initial_value, reducer)) = self.reducers.get(key) {
+                let updated_value = reducer(
+                    value.clone(),
+                    &event,
+                    &payload.as_deref().unwrap_or_default(),
+                );
+                if *value != updated_value {
+                    *value = updated_value.clone();
+                    for listener in listeners.iter() {
+                        listener(key, &updated_value);
+                    }
+                }
+            }
+        }
+
+        serde_json::to_string(&self.data).unwrap()
+    }
+}
+
 pub struct State {
     pub data: Mutex<HashMap<String, Value>>,
     pub listeners: Mutex<Vec<Box<dyn Fn(&str, &Value) + Send + Sync>>>,
