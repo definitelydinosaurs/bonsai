@@ -5,14 +5,16 @@ use std::sync::Mutex;
 pub struct Machine {
     pub data: HashMap<String, Value>,
     pub reducers: HashMap<String, (Value, fn(Value, &str, &str) -> Value)>,
+    pub listeners: Mutex<Vec<Box<dyn Fn(&str, &Value) + Send + Sync>>>,
 }
 
 impl Machine {
     pub fn new(
         data: HashMap<String, Value>,
         reducers: HashMap<String, (Value, fn(Value, &str, &str) -> Value)>,
+        listeners: Mutex<Vec<Box<dyn Fn(&str, &Value) + Send + Sync>>>,
     ) -> Self {
-        Self { data, reducers }
+        Self { data, reducers, listeners }
     }
 
     pub fn consume(
