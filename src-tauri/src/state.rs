@@ -21,7 +21,6 @@ impl Machine {
         &mut self,
         event: String,
         payload: Option<String>,
-        listeners: &[Box<dyn Fn(&str, &Value) + Send + Sync>],
     ) -> String {
         for (key, value) in self.data.iter_mut() {
             if let Some((_initial_value, reducer)) = self.reducers.get(key) {
@@ -32,7 +31,7 @@ impl Machine {
                 );
                 if *value != updated_value {
                     *value = updated_value.clone();
-                    for listener in listeners.iter() {
+                    for listener in self.listeners.lock().unwrap().iter() {
                         listener(key, &updated_value);
                     }
                 }
