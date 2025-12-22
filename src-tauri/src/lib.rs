@@ -10,7 +10,7 @@ use tauri::Manager;
 use uuid::Uuid;
 
 mod state;
-use state::{consume, State};
+use state::{consume, State, Machine};
 
 fn write_file(file_name: &str, content: &Value) -> Result<()> {
     let data = json!(content);
