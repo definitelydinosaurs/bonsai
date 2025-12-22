@@ -3,7 +3,7 @@ use std::collections::HashMap;
 use std::sync::Mutex;
 
 pub struct Machine {
-    pub data: HashMap<String, Value>,
+    pub data: Mutex<HashMap<String, Value>>,
     pub reducers: HashMap<String, (Value, fn(Value, &str, &str) -> Value)>,
     pub listeners: Mutex<Vec<Box<dyn Fn(&str, &Value) + Send + Sync>>>,
 }
@@ -15,14 +15,14 @@ impl Machine {
         listeners: Mutex<Vec<Box<dyn Fn(&str, &Value) + Send + Sync>>>,
     ) -> Self {
         Self {
-            data,
+            data: data.into(),
             reducers,
             listeners,
         }
     }
 
     pub fn consume(&mut self, event: String, payload: Option<String>) -> String {
-        for (key, value) in self.data.iter_mut() {
+        for (key, value) in self.data.lock().unwrap().iter_mut() {
             if let Some((_initial_value, reducer)) = self.reducers.get(key) {
                 let updated_value = reducer(
                     value.clone(),
