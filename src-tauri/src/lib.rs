@@ -206,6 +206,13 @@ pub fn run() {
                         .build(),
                 )?;
             }
+
+            let machine = Machine::new(
+                data.clone(),
+                reducers,
+                Mutex::new(std::mem::take(&mut *listeners)),
+            );
+
             Ok(())
         })
         .manage(State {
