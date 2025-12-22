@@ -21,8 +21,9 @@ impl Machine {
         }
     }
 
-    pub fn consume(&mut self, event: String, payload: Option<String>) -> String {
-        for (key, value) in self.data.lock().unwrap().iter_mut() {
+    pub fn consume(&self, event: String, payload: Option<String>) -> String {
+        let mut data = self.data.lock().unwrap();
+        for (key, value) in data.iter_mut() {
             if let Some((_initial_value, reducer)) = self.reducers.get(key) {
                 let updated_value = reducer(
                     value.clone(),
@@ -38,7 +39,7 @@ impl Machine {
             }
         }
 
-        serde_json::to_string(&self.data).unwrap()
+        serde_json::to_string(&*data).unwrap()
     }
 }
 
