@@ -142,7 +142,7 @@ fn sessions_reducer(state: Value, event: &str, payload: &str) -> Value {
 
 #[tauri::command]
 fn dispatch(
-    app: tauri::AppHandle,
+    _app: tauri::AppHandle,
     event: String,
     payload: Option<String>,
     state: tauri::State<State>,
