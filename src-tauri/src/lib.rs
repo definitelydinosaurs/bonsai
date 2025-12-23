@@ -145,13 +145,9 @@ fn dispatch(
     _app: tauri::AppHandle,
     event: String,
     payload: Option<String>,
-    state: tauri::State<State>,
+    machine: tauri::State<Machine>,
 ) -> String {
-    let mut data = state.data.lock().unwrap();
-    let state_keys = &state.reducers;
-    let listeners = state.listeners.lock().unwrap();
-
-    (state.consume)(event, payload, &mut data, state_keys, &listeners)
+    machine.consume(event, payload)
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
