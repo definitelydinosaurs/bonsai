@@ -175,7 +175,7 @@ pub fn run() {
             }
 
             let state = app.state::<State>();
-            let mut data = state.data.lock().unwrap();
+            let mut data = HashMap::new();
             let mut listeners = state.listeners.lock().unwrap();
 
             let reducers = HashMap::from([
@@ -229,7 +229,7 @@ pub fn run() {
             }
 
             let machine = Machine::new(
-                data.clone(),
+                data,
                 reducers,
                 Mutex::new(std::mem::take(&mut *listeners)),
             );
