@@ -213,6 +213,8 @@ pub fn run() {
                 Mutex::new(std::mem::take(&mut *listeners)),
             );
 
+            println!("{}", machine.consume("app_initialized".to_string(), None));
+
             Ok(())
         })
         .manage(State {
