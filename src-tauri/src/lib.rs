@@ -177,7 +177,32 @@ pub fn run() {
             let state = app.state::<State>();
             let mut data = state.data.lock().unwrap();
             let mut listeners = state.listeners.lock().unwrap();
-            let reducers = state.reducers.clone();
+
+            let reducers = HashMap::from([
+                (
+                    "sources".to_string(),
+                    (json!({}), sources_reducer as fn(Value, &str, &str) -> Value),
+                ),
+                (
+                    "sessions".to_string(),
+                    (json!({}), state_identity as fn(Value, &str, &str) -> Value),
+                ),
+                (
+                    "learnings".to_string(),
+                    (json!({}), state_identity as fn(Value, &str, &str) -> Value),
+                ),
+                (
+                    "settings".to_string(),
+                    (
+                        json!({}),
+                        settings_reducer as fn(Value, &str, &str) -> Value,
+                    ),
+                ),
+                (
+                    "collections".to_string(),
+                    (json!({}), state_identity as fn(Value, &str, &str) -> Value),
+                ),
+            ]);
 
             for (name, attributes) in reducers.iter() {
                 let (initial_state, _modify_fn) = attributes;
