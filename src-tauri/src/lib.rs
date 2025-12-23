@@ -215,6 +215,8 @@ pub fn run() {
 
             println!("{}", machine.consume("app_initialized".to_string(), None));
 
+            app.manage(machine);
+
             Ok(())
         })
         .manage(State {
