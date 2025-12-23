@@ -176,7 +176,7 @@ pub fn run() {
 
             let state = app.state::<State>();
             let mut data = HashMap::new();
-            let mut listeners = state.listeners.lock().unwrap();
+            let mut listeners: Vec<Box<dyn Fn(&str, &Value) + Send + Sync>> = Vec::new();
 
             let reducers = HashMap::from([
                 (
@@ -231,7 +231,7 @@ pub fn run() {
             let machine = Machine::new(
                 data,
                 reducers,
-                Mutex::new(std::mem::take(&mut *listeners)),
+                Mutex::new(std::mem::take(&mut listeners)),
             );
 
             println!("{}", machine.consume("app_initialized".to_string(), None));
