@@ -174,7 +174,6 @@ pub fn run() {
                 }
             }
 
-            let state = app.state::<State>();
             let mut data = HashMap::new();
             let mut listeners: Vec<Box<dyn Fn(&str, &Value) + Send + Sync>> = Vec::new();
 
