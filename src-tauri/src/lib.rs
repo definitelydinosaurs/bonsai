@@ -9,8 +9,8 @@ use serde_json::{json, Value};
 use tauri::Manager;
 use uuid::Uuid;
 
-mod state;
-use state::{Machine};
+mod hermenia;
+use hermenia::{Machine};
 
 fn write_file(file_name: &str, content: &Value) -> Result<()> {
     let data = json!(content);
@@ -33,13 +33,13 @@ fn read_file(file_name: &str, default_value: Value) -> Result<String> {
     Ok(buffer)
 }
 
-fn create_persist_fn(app: &tauri::AppHandle) -> impl Fn(&str, &Value) {
+fn create_persist_fn(app: &tauri::AppHandle) -> impl Fn(&str, &Value, &str, &Value) {
     let mut app_data_dir = app.path().app_data_dir().unwrap();
     if cfg!(debug_assertions) {
         app_data_dir = "".into();
     }
 
-    move |key: &str, value: &Value| {
+    move |key: &str, value: &Value, event: &str, payload: &Value| {
         let file_path = app_data_dir.join(format!("{}.json", key));
         write_file(file_path.to_str().unwrap(), value).expect("Failed to write to file");
     }
@@ -175,7 +175,7 @@ pub fn run() {
             }
 
             let mut data = HashMap::new();
-            let mut listeners: Vec<Box<dyn Fn(&str, &Value) + Send + Sync>> = Vec::new();
+            let mut listeners: Vec<Box<dyn Fn(&str, &Value, &str, &Value) + Send + Sync>> = Vec::new();
 
             let reducers = HashMap::from([
                 (
