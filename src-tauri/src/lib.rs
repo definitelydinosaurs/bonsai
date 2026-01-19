@@ -33,13 +33,13 @@ fn read_file(file_name: &str, default_value: Value) -> Result<String> {
     Ok(buffer)
 }
 
-fn create_persist_fn(app: &tauri::AppHandle) -> impl Fn(&str, &Value, &str, &Value) {
+fn create_persist_state_fn(app: &tauri::AppHandle) -> impl Fn(&str, &Value, &Value) {
     let mut app_data_dir = app.path().app_data_dir().unwrap();
     if cfg!(debug_assertions) {
         app_data_dir = "".into();
     }
 
-    move |key: &str, value: &Value, event: &str, payload: &Value| {
+    move |key: &str, value: &Value, event: &Value| {
         let file_path = app_data_dir.join(format!("{}.json", key));
         write_file(file_path.to_str().unwrap(), value).expect("Failed to write to file");
     }
@@ -49,22 +49,22 @@ fn payload_identity(_state: Value, _event: &str, payload: &str) -> Value {
     serde_json::from_str(payload).unwrap_or(json!({}))
 }
 
-fn state_identity(state: Value, event: &str, payload: &str) -> Value {
+fn state_identity(state: Value, event: Value) -> Value {
     // This function is a placeholder for state that does not change
     // It simply returns the state as is, without modification
     println!(
-        "State identity called with event: {}, payload: {}",
-        event, payload
+        "State identity called with event: {}",
+        event
     );
     state
 }
 
-fn sources_reducer(state: Value, event: &str, payload: &str) -> Value {
+fn sources_reducer(state: Value, event: Value) -> Value {
     let mut new_state = state.clone();
-    match event {
+    match event["type"].as_str().unwrap() {
         "source_added" => {
             let id = Uuid::new_v4().to_string();
-            let mut source: Value = serde_json::from_str(payload).unwrap();
+            let mut source: Value = event["payload"].clone();
 
             let timestamp = SystemTime::now()
                 .duration_since(UNIX_EPOCH)
@@ -86,22 +86,22 @@ fn sources_reducer(state: Value, event: &str, payload: &str) -> Value {
             return new_state;
         }
         "source_deleted" => {
-            let id: Uuid = payload.parse().unwrap();
+            let id: Uuid = serde_json::from_value(event["payload"].clone()).unwrap();
             new_state.as_object_mut().unwrap().remove(&id.to_string());
             return new_state;
         }
         _ => {
-            println!("Unknown command: {}", event);
+            println!("Unknown command: {}", event["type"].as_str().unwrap());
         }
     }
     state
 }
 
-fn settings_reducer(state: Value, event: &str, payload: &str) -> Value {
+fn settings_reducer(state: Value, event: Value) -> Value {
     let mut new_state = state.clone();
-    match event {
+    match event["type"].as_str().unwrap() {
         "settings_updated" | "setting_added" => {
-            let payload_value: Value = serde_json::from_str(payload).unwrap();
+            let payload_value: Value = event["payload"].clone();
             for (key, value) in payload_value.as_object().unwrap() {
                 new_state
                     .as_object_mut()
@@ -111,7 +111,7 @@ fn settings_reducer(state: Value, event: &str, payload: &str) -> Value {
             return new_state;
         }
         _ => {
-            println!("Unknown command: {}", event);
+            println!("Unknown command: {}", event["type"].as_str().unwrap());
         }
     }
     state
@@ -175,31 +175,31 @@ pub fn run() {
             }
 
             let mut data = HashMap::new();
-            let mut listeners: Vec<Box<dyn Fn(&str, &Value, &str, &Value) + Send + Sync>> = Vec::new();
+            let mut listeners: Vec<Box<dyn Fn(&str, &Value, &Value) + Send + Sync>> = Vec::new();
 
             let reducers = HashMap::from([
                 (
                     "sources".to_string(),
-                    (json!({}), sources_reducer as fn(Value, &str, &str) -> Value),
+                    (json!({}), sources_reducer as fn(Value, Value) -> Value),
                 ),
                 (
                     "sessions".to_string(),
-                    (json!({}), state_identity as fn(Value, &str, &str) -> Value),
+                    (json!({}), state_identity as fn(Value, Value) -> Value),
                 ),
                 (
                     "learnings".to_string(),
-                    (json!({}), state_identity as fn(Value, &str, &str) -> Value),
+                    (json!({}), state_identity as fn(Value, Value) -> Value),
                 ),
                 (
                     "settings".to_string(),
                     (
                         json!({}),
-                        settings_reducer as fn(Value, &str, &str) -> Value,
+                        settings_reducer as fn(Value, Value) -> Value,
                     ),
                 ),
                 (
                     "collections".to_string(),
-                    (json!({}), state_identity as fn(Value, &str, &str) -> Value),
+                    (json!({}), state_identity as fn(Value, Value) -> Value),
                 ),
             ]);
 
@@ -217,7 +217,7 @@ pub fn run() {
                 data.insert(name.to_string(), initial_json);
             }
 
-            listeners.push(Box::new(create_persist_fn(&app.handle())));
+            listeners.push(Box::new(create_persist_state_fn(&app.handle())));
 
             if cfg!(debug_assertions) {
                 app.handle().plugin(
