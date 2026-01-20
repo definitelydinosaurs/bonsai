@@ -240,7 +240,8 @@ pub fn run() {
                 data.insert(name.to_string(), initial_json);
             }
 
-            listeners.push(Box::new(create_persist_state_fn(&app.handle())));
+            // listeners.push(Box::new(create_persist_state_fn(&app.handle())));
+            listeners.push(Box::new(create_persist_event_fn(&app.handle())));
 
             if cfg!(debug_assertions) {
                 app.handle().plugin(

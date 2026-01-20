@@ -4,3 +4,4 @@ src-tauri/sessions.json
 src-tauri/learnings.json
 src-tauri/settings.json
 src-tauri/collections.json
+src-tauri/events.json
