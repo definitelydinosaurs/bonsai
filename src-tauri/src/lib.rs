@@ -45,6 +45,28 @@ fn create_persist_state_fn(app: &tauri::AppHandle) -> impl Fn(&str, &Value, &Val
     }
 }
 
+fn create_persist_event_fn(app: &tauri::AppHandle) -> impl Fn(&str, &Value, &Value) {
+    let mut app_data_dir = app.path().app_data_dir().unwrap();
+    if cfg!(debug_assertions) {
+        app_data_dir = "".into();
+    }
+
+    move |key: &str, value: &Value, event: &Value| {
+        let file_path_str = app_data_dir
+            .join(format!("{}.json", "events"))
+            .to_str()
+            .unwrap()
+            .to_string();
+
+        let existing_events_str = read_file(&file_path_str, json!({})).unwrap();
+        let mut events: HashMap<String, Value> =
+            serde_json::from_str(&existing_events_str).unwrap();
+        let event_id = event["id"].as_str().unwrap().to_string();
+        events.insert(event_id, event.clone());
+        write_file(&file_path_str, &json!(events)).expect("Failed to write to events file");
+    }
+}
+
 fn payload_identity(_state: Value, _event: &str, payload: &str) -> Value {
     serde_json::from_str(payload).unwrap_or(json!({}))
 }
