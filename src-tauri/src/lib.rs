@@ -266,6 +266,22 @@ pub fn run() {
 
             println!("{}", machine.consume("app_initialized".to_string(), None));
 
+            let events_str = read_file(
+                app_data_dir.join("events.json").to_str().unwrap(),
+                json!({}),
+            )
+            .unwrap();
+
+            let events: HashMap<String, Value> = serde_json::from_str(&events_str).unwrap();
+            let mut sorted_events: Vec<_> = events.values().collect();
+            sorted_events.sort_by_key(|e| e["createTime"].as_u64());
+
+            for event in sorted_events {
+                let event_type = event["type"].as_str().unwrap().to_string();
+                let payload = event["payload"].to_string();
+                machine.consume(event_type, Some(payload));
+            }
+
             app.manage(machine);
 
             Ok(())
