@@ -197,7 +197,14 @@ pub fn run() {
                 }
             }
 
-            let mut data = HashMap::new();
+            // let mut data = HashMap::new();
+            let data: HashMap<String, Value> = HashMap::from([
+                ("sources".to_string(), json!({})),
+                ("settings".to_string(), json!({})),
+                ("collections".to_string(), json!({})),
+                ("sessions".to_string(), json!({})),
+                ("learnings".to_string(), json!({})),
+            ]);
             let mut listeners: Vec<Box<dyn Fn(&str, &Value, &Value) + Send + Sync>> = Vec::new();
 
             let reducers = HashMap::from([
@@ -226,19 +233,19 @@ pub fn run() {
                 ),
             ]);
 
-            for (name, attributes) in reducers.iter() {
-                let (initial_state, _modify_fn) = attributes;
-                let initial_data = read_file(
-                    app_data_dir
-                        .join(&format!("{}.json", name))
-                        .to_str()
-                        .unwrap(),
-                    initial_state.clone(),
-                )
-                .unwrap();
-                let initial_json: Value = serde_json::from_str(&initial_data).unwrap();
-                data.insert(name.to_string(), initial_json);
-            }
+            // for (name, attributes) in reducers.iter() {
+            //     let (initial_state, _modify_fn) = attributes;
+            //     let initial_data = read_file(
+            //         app_data_dir
+            //             .join(&format!("{}.json", name))
+            //             .to_str()
+            //             .unwrap(),
+            //         initial_state.clone(),
+            //     )
+            //     .unwrap();
+            //     let initial_json: Value = serde_json::from_str(&initial_data).unwrap();
+            //     data.insert(name.to_string(), initial_json);
+            // }
 
             // listeners.push(Box::new(create_persist_state_fn(&app.handle())));
             listeners.push(Box::new(create_persist_event_fn(&app.handle())));
