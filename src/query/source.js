@@ -28,6 +28,6 @@ export const addBook = ({ refetch, setText }) => ({
 })
 
 export const deleteBook = refetch => ({
-  mutationFn: id => invoke('dispatch', { event: 'source_deleted', payload: id }),
+  mutationFn: id => invoke('dispatch', { event: 'source_deleted', payload: JSON.stringify({ id }) }),
   onSuccess: () => refetch()
 })

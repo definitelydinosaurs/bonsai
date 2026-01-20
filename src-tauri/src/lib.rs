@@ -86,7 +86,8 @@ fn sources_reducer(state: Value, event: Value) -> Value {
             return new_state;
         }
         "source_deleted" => {
-            let id: Uuid = serde_json::from_value(event["payload"].clone()).unwrap();
+            println!("Deleting source: {}", event["payload"]["id"]);
+            let id: Uuid = serde_json::from_value(event["payload"]["id"].clone()).unwrap();
             new_state.as_object_mut().unwrap().remove(&id.to_string());
             return new_state;
         }
