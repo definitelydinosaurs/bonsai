@@ -248,7 +248,7 @@ pub fn run() {
             // }
 
             // listeners.push(Box::new(create_persist_state_fn(&app.handle())));
-            listeners.push(Box::new(create_persist_event_fn(&app.handle())));
+            // listeners.push(Box::new(create_persist_event_fn(&app.handle())));
 
             if cfg!(debug_assertions) {
                 app.handle().plugin(
@@ -258,11 +258,7 @@ pub fn run() {
                 )?;
             }
 
-            let machine = Machine::new(
-                data,
-                reducers,
-                Mutex::new(std::mem::take(&mut listeners)),
-            );
+            let machine = Machine::new(data, reducers, Mutex::new(std::mem::take(&mut listeners)));
 
             println!("{}", machine.consume("app_initialized".to_string(), None));
 
