@@ -278,6 +278,7 @@ pub fn run() {
                 machine.consume(event_type, Some(payload));
             }
 
+            machine.subscribe(Box::new(create_persist_event_fn(&app.handle())));
             app.manage(machine);
 
             Ok(())
