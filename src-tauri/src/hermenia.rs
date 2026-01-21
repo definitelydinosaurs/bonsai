@@ -59,4 +59,8 @@ impl Machine {
 
         serde_json::to_string(&*data).unwrap()
     }
+
+    pub fn subscribe(&self, callback: Box<dyn Fn(&str, &Value, &Value) + Send + Sync>) {
+        self.listeners.lock().unwrap().push(callback);
+    }
 }
