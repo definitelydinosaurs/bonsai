@@ -10,7 +10,7 @@ use tauri::Manager;
 use uuid::Uuid;
 
 mod hermenia;
-use hermenia::{Machine};
+use hermenia::Machine;
 
 fn write_file(file_name: &str, content: &Value) -> Result<()> {
     let data = json!(content);
@@ -74,10 +74,7 @@ fn payload_identity(_state: Value, _event: &str, payload: &str) -> Value {
 fn state_identity(state: Value, event: Value) -> Value {
     // This function is a placeholder for state that does not change
     // It simply returns the state as is, without modification
-    println!(
-        "State identity called with event: {}",
-        event
-    );
+    println!("State identity called with event: {}", event);
     state
 }
 
@@ -222,10 +219,7 @@ pub fn run() {
                 ),
                 (
                     "settings".to_string(),
-                    (
-                        json!({}),
-                        settings_reducer as fn(Value, Value) -> Value,
-                    ),
+                    (json!({}), settings_reducer as fn(Value, Value) -> Value),
                 ),
                 (
                     "collections".to_string(),
