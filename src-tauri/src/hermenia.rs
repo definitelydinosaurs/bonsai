@@ -8,6 +8,7 @@ pub struct Machine {
     pub data: Mutex<HashMap<String, Value>>,
     pub reducers: HashMap<String, (Value, fn(Value, Value) -> Value)>,
     pub listeners: Mutex<Vec<Box<dyn Fn(&str, &Value, &Value) + Send + Sync>>>,
+    pub interpreters: Mutex<Vec<Box<dyn Fn(&Value) -> Value + Send + Sync>>>,
 }
 
 fn hydrate_event(event: String, payload: &str) -> Value {
@@ -37,13 +38,42 @@ impl Machine {
             data: data.into(),
             reducers,
             listeners,
+            interpreters: Mutex::new(Vec::new()),
         }
+    }
+
+    pub fn other_consume(&self, event: Value) -> HashMap<String, Value> {
+        let mut data = self.data.lock().unwrap();
+        let mut wrapped_event = event.clone();
+        for interpreter in self.interpreters.lock().unwrap().iter() {
+            wrapped_event = interpreter(&wrapped_event.clone());
+            // if interpreted_event != event {
+            //     return self.other_consume(interpreted_event);
+            // }
+        }
+
+        // println!("wrapped event {:?}", wrapped_event);
+        for (key, value) in data.iter_mut() {
+            if let Some((_initial_value, reducer)) = self.reducers.get(key) {
+                // println!("reducer getting event {:?} for key {}", wrapped_event, key);
+                let updated_value = reducer(value.clone(), wrapped_event.clone());
+                if *value != updated_value {
+                    *value = updated_value.clone();
+                    for listener in self.listeners.lock().unwrap().iter() {
+                        // println!("listener getting event {:?} for key {}", wrapped_event, key);
+                        listener(key, &updated_value, &wrapped_event);
+                    }
+                }
+            }
+        }
+
+        data.clone()
     }
 
     pub fn consume(&self, event: String, payload: Option<String>) -> String {
         let mut data = self.data.lock().unwrap();
         let payload_str = payload.as_deref().unwrap_or("{}");
-        let hydrated_event = hydrate_event(event.to_string(), payload_str);
+        let mut hydrated_event = hydrate_event(event.to_string(), payload_str);
 
         for (key, value) in data.iter_mut() {
             if let Some((_initial_value, reducer)) = self.reducers.get(key) {
@@ -62,5 +92,9 @@ impl Machine {
 
     pub fn subscribe(&self, callback: Box<dyn Fn(&str, &Value, &Value) + Send + Sync>) {
         self.listeners.lock().unwrap().push(callback);
+    }
+
+    pub fn interpret(&self, callback: Box<dyn Fn(&Value) -> Value + Send + Sync>) {
+        self.interpreters.lock().unwrap().push(callback);
     }
 }
