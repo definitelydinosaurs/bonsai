@@ -167,7 +167,10 @@ fn dispatch(
     payload: Option<String>,
     machine: tauri::State<Machine>,
 ) -> String {
-    machine.consume(event, payload)
+    println!("Dispatching event: {}", event);
+    let hydrated_event = hydrate_event(event.clone(), payload.as_deref().unwrap_or("{}"));
+    let data = machine.other_consume(hydrated_event);
+    serde_json::to_string(&data).unwrap()
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
