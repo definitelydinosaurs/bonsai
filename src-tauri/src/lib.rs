@@ -257,7 +257,7 @@ pub fn run() {
 
             let machine = Machine::new(data, reducers, Mutex::new(std::mem::take(&mut listeners)));
 
-            println!("{}", machine.consume("app_initialized".to_string(), None));
+            machine.other_consume(json!({"type": "app_initialized"}));
 
             let events_str = read_file(
                 app_data_dir.join("events.json").to_str().unwrap(),
