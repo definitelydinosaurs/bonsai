@@ -230,23 +230,6 @@ pub fn run() {
                 ),
             ]);
 
-            // for (name, attributes) in reducers.iter() {
-            //     let (initial_state, _modify_fn) = attributes;
-            //     let initial_data = read_file(
-            //         app_data_dir
-            //             .join(&format!("{}.json", name))
-            //             .to_str()
-            //             .unwrap(),
-            //         initial_state.clone(),
-            //     )
-            //     .unwrap();
-            //     let initial_json: Value = serde_json::from_str(&initial_data).unwrap();
-            //     data.insert(name.to_string(), initial_json);
-            // }
-
-            // listeners.push(Box::new(create_persist_state_fn(&app.handle())));
-            // listeners.push(Box::new(create_persist_event_fn(&app.handle())));
-
             if cfg!(debug_assertions) {
                 app.handle().plugin(
                     tauri_plugin_log::Builder::default()
