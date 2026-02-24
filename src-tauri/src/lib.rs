@@ -255,7 +255,8 @@ pub fn run() {
             for event in sorted_events {
                 let event_type = event["type"].as_str().unwrap().to_string();
                 let payload = event["payload"].to_string();
-                machine.other_consume(json!({"type": event_type, "payload": payload}));
+                machine.consume(event_type, Some(payload));
+                // machine.other_consume(json!({"type": event_type, "payload": payload}));
             }
 
             machine.subscribe(Box::new(create_persist_event_fn(&app.handle())));
