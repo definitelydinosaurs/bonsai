@@ -10,7 +10,7 @@ use tauri::Manager;
 use uuid::Uuid;
 
 mod hermenia;
-use hermenia::{Machine, hydrate_event};
+use hermenia::Machine;
 
 fn write_file(file_name: &str, content: &Value) -> Result<()> {
     let data = json!(content);
@@ -185,7 +185,6 @@ fn dispatch(
     machine: tauri::State<Machine>,
 ) -> String {
     println!("Dispatching event: {}", event);
-    // let hydrated_event = hydrate_event(event.clone(), payload.as_deref().unwrap_or("{}"));
     let data = machine.other_consume(json!({
         "type": event,
         "payload": payload.as_deref().unwrap_or("{}")
