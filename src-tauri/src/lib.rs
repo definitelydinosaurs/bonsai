@@ -160,6 +160,23 @@ fn sessions_reducer(state: Value, event: &str, payload: &str) -> Value {
     state
 }
 
+fn event_interpreter(event: &Value) -> Value {
+    let id = Uuid::new_v4().to_string();
+
+    let timestamp = SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .expect("Time went backwards")
+        .as_millis() as u64;
+
+    let mut new_event = event.as_object().cloned().unwrap_or_default();
+    new_event.insert("id".to_string(), json!(id));
+    new_event.insert("createTime".to_string(), json!(timestamp));
+
+    // println!("hydrated event {:?}", json!(new_event));
+
+    json!(new_event)
+}
+
 #[tauri::command]
 fn dispatch(
     _app: tauri::AppHandle,
