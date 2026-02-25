@@ -185,8 +185,11 @@ fn dispatch(
     machine: tauri::State<Machine>,
 ) -> String {
     println!("Dispatching event: {}", event);
-    let hydrated_event = hydrate_event(event.clone(), payload.as_deref().unwrap_or("{}"));
-    let data = machine.other_consume(hydrated_event);
+    // let hydrated_event = hydrate_event(event.clone(), payload.as_deref().unwrap_or("{}"));
+    let data = machine.other_consume(json!({
+        "type": event,
+        "payload": payload.as_deref().unwrap_or("{}")
+    }));
     serde_json::to_string(&data).unwrap()
 }
 
