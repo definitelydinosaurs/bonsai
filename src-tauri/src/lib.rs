@@ -272,8 +272,6 @@ pub fn run() {
             sorted_events.sort_by_key(|e| e["createTime"].as_u64());
 
             for event in sorted_events {
-                let event_type = event["type"].as_str().unwrap().to_string();
-                let payload = event["payload"].to_string();
                 machine.other_consume(json!(event.clone()));
             }
 
