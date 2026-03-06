@@ -185,7 +185,7 @@ fn dispatch(
     machine: tauri::State<Machine>,
 ) -> String {
     println!("Dispatching event: {}", event);
-    let data = machine.other_consume(json!({
+    let data = machine.consume(json!({
         "type": event,
         "payload": payload.as_deref().unwrap_or("{}")
     }));
@@ -259,7 +259,7 @@ pub fn run() {
 
             let machine = Machine::new(data, reducers, Mutex::new(std::mem::take(&mut listeners)));
 
-            machine.other_consume(json!({"type": "app_initialized"}));
+            machine.consume(json!({"type": "app_initialized"}));
 
             let events_str = read_file(
                 app_data_dir.join("events.json").to_str().unwrap(),
@@ -272,7 +272,7 @@ pub fn run() {
             sorted_events.sort_by_key(|e| e["createTime"].as_u64());
 
             for event in sorted_events {
-                machine.other_consume(json!(event.clone()));
+                machine.consume(json!(event.clone()));
             }
 
             machine.subscribe(Box::new(create_persist_event_fn(&app.handle())));
