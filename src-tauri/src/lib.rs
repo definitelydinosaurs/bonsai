@@ -33,18 +33,6 @@ fn read_file(file_name: &str, default_value: Value) -> Result<String> {
     Ok(buffer)
 }
 
-fn create_persist_state_fn(app: &tauri::AppHandle) -> impl Fn(&str, &Value, &Value) {
-    let mut app_data_dir = app.path().app_data_dir().unwrap();
-    if cfg!(debug_assertions) {
-        app_data_dir = "".into();
-    }
-
-    move |key: &str, value: &Value, event: &Value| {
-        let file_path = app_data_dir.join(format!("{}.json", key));
-        write_file(file_path.to_str().unwrap(), value).expect("Failed to write to file");
-    }
-}
-
 fn create_persist_event_fn(app: &tauri::AppHandle) -> impl Fn(&str, &Value, &Value) {
     let mut app_data_dir = app.path().app_data_dir().unwrap();
     if cfg!(debug_assertions) {
