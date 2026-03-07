@@ -55,10 +55,6 @@ fn create_persist_event_fn(app: &tauri::AppHandle) -> impl Fn(&str, &Value, &Val
     }
 }
 
-fn payload_identity(_state: Value, _event: &str, payload: &str) -> Value {
-    serde_json::from_str(payload).unwrap_or(json!({}))
-}
-
 fn state_identity(state: Value, event: Value) -> Value {
     // This function is a placeholder for state that does not change
     // It simply returns the state as is, without modification
