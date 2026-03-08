@@ -7,8 +7,10 @@ node_modules/
 .expo/
 dist/
 web-build/
+expo-env.d.ts
 
 # Native
+.kotlin/
 *.orig.*
 *.jks
 *.p8
@@ -48,3 +50,9 @@ learnings.json
 settings.json
 collections.json
 events.json
+
+app-example
+
+# generated native folders
+/ios
+/android
