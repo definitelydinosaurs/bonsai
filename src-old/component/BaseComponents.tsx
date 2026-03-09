@@ -123,7 +123,7 @@ export const BaseForm = ({
         }}
       >
         {schema.properties &&
-          Object.entries(schema.properties).filter(([key, property]) => property.visible ?? true).map(([key, property]) =>
+          Object.entries(schema.properties ?? {}).filter(([key, property]) => property.visible ?? true).map(([key, property]) =>
             property.type === "search" ? (
               <SearchableSelect
                 key={key}
@@ -213,7 +213,7 @@ const BaseListItem = ({
         <Text>{(node as Record<string, unknown>)?.[targetKey]}</Text>
       )}
       {node.actions &&
-        Object.entries(node.actions).map(([key, action]) => (
+        Object.entries(node.actions ?? {}).map(([key, action]) => (
           <Button
             theme="red"
             size="$2"
