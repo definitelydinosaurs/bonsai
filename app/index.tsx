@@ -28,7 +28,6 @@ export default function Index() {
     {},
   );
   const [isSheetOpen, setSheetOpen] = useState(false);
-  const [activeNode, setActiveNode] = useState<string | null>(null);
   const [activeSource, setActiveSource] = useState<string | null>(null);
 
   useEffect(() => {
@@ -54,19 +53,19 @@ export default function Index() {
         open={isSheetOpen}
         onOpenChange={(arg) => {
           setSheetOpen(arg);
-          setActiveNode(null);
+          setActiveSource(null);
         }}
       >
         {activeSource && (
           <BaseDetails
             node={{
-              ...(nodes && (nodes[activeNode ?? ""] ?? {})),
+              ...(nodes && (nodes[activeSource ?? ""] ?? {})),
               ...(Object.values(edges).filter(
-                (edge) => edge.source === activeNode,
+                (edge) => edge.source === activeSource,
               ).length > 0
                 ? {
                     next: Object.values(edges)
-                      .filter((edge) => edge.source === activeNode)
+                      .filter((edge) => edge.source === activeSource)
                       .map((edge) => nodes[(edge.target as string) ?? ""].slug),
                   }
                 : {}),
@@ -75,12 +74,12 @@ export default function Index() {
         )}
         <BaseForm
           schema={{
-            title: activeNode ? "Edit Node" : "Create Node",
+            title: activeSource ? "Edit Source" : "Create Source",
             properties: {
               slug: {
                 type: "string",
                 title: "Slug",
-                value: (nodes && (nodes[activeNode ?? ""]?.slug as string)) ?? "",
+                value: (nodes && (nodes[activeSource ?? ""]?.slug as string)) ?? "",
               },
               targets: {
                 type: "search",
@@ -91,20 +90,20 @@ export default function Index() {
                 })),
                 value: "",
                 values: "multiple",
-                visible: activeNode !== null,
+                visible: activeSource !== null,
               },
             },
           }}
           onSubmit={
-            activeNode
+            activeSource
               ? ({ slug, targets }) =>
                   Promise.all([
-                    dispatch("node_updated", { id: activeNode, slug })
+                    dispatch("source_updated", { id: activeSource, slug })
                       .then((data) => setNodes(data?.node))
                       .then(() => setSheetOpen(false)),
                     ...(targets as unknown[]).map((target) =>
                       dispatch("edge_created", {
-                        source: activeNode,
+                        source: activeSource,
                         target,
                       }).then((data) => setEdges(data?.edge)),
                     ),
@@ -121,7 +120,7 @@ export default function Index() {
           nodes={Object.entries(nodes ?? {}).map(([id, node]) => ({
             ...node,
             onPress: () => {
-              setActiveNode(id);
+              setActiveSource(id);
               setSheetOpen(true);
             },
             actions: {
