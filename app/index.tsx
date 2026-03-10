@@ -144,7 +144,7 @@ export default function Index() {
         right="$3"
         size="$2"
       >
-        New Node
+        New Source
       </Button>
     </View>
   );
