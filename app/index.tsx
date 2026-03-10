@@ -109,7 +109,7 @@ export default function Index() {
                     ),
                   ])
               : ({ slug, targets }) =>
-                  dispatch("node_created", { slug })
+                  dispatch("source_added", { slug })
                     .then((data) => setNodes(data?.node))
                     .then(() => setSheetOpen(false))
           }
