@@ -24,9 +24,6 @@ export default function Index() {
   const [nodes, setNodes] = useState<Record<string, Record<string, unknown>>>(
     {},
   );
-  const [edges, setEdges] = useState<Record<string, Record<string, unknown>>>(
-    {},
-  );
   const [isSheetOpen, setSheetOpen] = useState(false);
   const [activeSource, setActiveSource] = useState<string | null>(null);
 
@@ -34,12 +31,11 @@ export default function Index() {
     dispatch("app_started", {})
       .then((data) => {
         setNodes(data?.node);
-        setEdges(data?.edge);
       })
       .catch(console.error);
   }, []);
 
-  console.log({ nodes, edges });
+  console.log({ nodes });
 
   return (
     <View
@@ -60,15 +56,6 @@ export default function Index() {
           <BaseDetails
             node={{
               ...(nodes && (nodes[activeSource ?? ""] ?? {})),
-              ...(Object.values(edges).filter(
-                (edge) => edge.source === activeSource,
-              ).length > 0
-                ? {
-                    next: Object.values(edges)
-                      .filter((edge) => edge.source === activeSource)
-                      .map((edge) => nodes[(edge.target as string) ?? ""].slug),
-                  }
-                : {}),
             }}
           />
         )}
@@ -81,33 +68,11 @@ export default function Index() {
                 title: "Slug",
                 value: (nodes && (nodes[activeSource ?? ""]?.slug as string)) ?? "",
               },
-              targets: {
-                type: "search",
-                title: "Targets",
-                options: Object.entries(nodes ?? {}).map(([id, node]) => ({
-                  label: node.slug as string,
-                  value: id,
-                })),
-                value: "",
-                values: "multiple",
-                visible: activeSource !== null,
-              },
             },
           }}
           onSubmit={
             activeSource
-              ? ({ slug, targets }) =>
-                  Promise.all([
-                    dispatch("source_updated", { id: activeSource, slug })
-                      .then((data) => setNodes(data?.node))
-                      .then(() => setSheetOpen(false)),
-                    ...(targets as unknown[]).map((target) =>
-                      dispatch("edge_created", {
-                        source: activeSource,
-                        target,
-                      }).then((data) => setEdges(data?.edge)),
-                    ),
-                  ])
+              ? console.log
               : ({ slug, targets }) =>
                   dispatch("source_added", { slug })
                     .then((data) => setNodes(data?.node))
