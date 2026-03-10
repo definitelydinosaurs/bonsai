@@ -29,6 +29,7 @@ export default function Index() {
   );
   const [isSheetOpen, setSheetOpen] = useState(false);
   const [activeNode, setActiveNode] = useState<string | null>(null);
+  const [activeSource, setActiveSource] = useState<string | null>(null);
 
   useEffect(() => {
     dispatch("app_started", {})
@@ -56,7 +57,7 @@ export default function Index() {
           setActiveNode(null);
         }}
       >
-        {activeNode && (
+        {activeSource && (
           <BaseDetails
             node={{
               ...(nodes && (nodes[activeNode ?? ""] ?? {})),
