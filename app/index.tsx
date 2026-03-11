@@ -61,11 +61,11 @@ export default function Index() {
         )}
         {!activeSource && (<BaseForm
           schema={{
-            title: activeSource ? "Edit Source" : "Create Source",
+            title: "Create Source",
             properties: {
               slug: {
                 type: "string",
-                title: "Slug",
+                title: "ISBN",
                 value: (nodes && (nodes[activeSource ?? ""]?.slug as string)) ?? "",
               },
             },
