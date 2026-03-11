@@ -59,7 +59,7 @@ export default function Index() {
             }}
           />
         )}
-        <BaseForm
+        {!activeSource && (<BaseForm
           schema={{
             title: activeSource ? "Edit Source" : "Create Source",
             properties: {
@@ -78,7 +78,7 @@ export default function Index() {
                     .then((data) => setNodes(data?.node))
                     .then(() => setSheetOpen(false))
           }
-        />
+        />)}
       </BottomDrawer>
       {(nodes ?? {}) && (
         <BaseList
