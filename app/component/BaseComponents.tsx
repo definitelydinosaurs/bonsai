@@ -1,5 +1,5 @@
 import { X } from "@tamagui/lucide-icons";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Button,
   Form,
@@ -105,15 +105,23 @@ const BaseFormField = ({
 export const BaseForm = ({
   schema,
   onSubmit,
+  onChange = () => {},
 }: {
   schema: Record<string, unknown>;
   onSubmit: (values: Record<string, unknown>) => void;
+  onChange?: (values: Record<string, unknown>) => void;
 }) => {
   const [formData, setFormData] = useState<Record<string, unknown>>({});
 
   const handleChange = (key: string, value: unknown) => {
     setFormData((prev) => ({ ...prev, [key]: value }));
   };
+
+  useEffect(() => {
+    if (onChange) {
+      onChange(formData);
+    }
+  }, [formData]);
 
   return (
     <>
