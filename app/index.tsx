@@ -66,7 +66,7 @@ export default function Index() {
               slug: {
                 type: "string",
                 title: "ISBN",
-                value: (sources && (sources[activeSource ?? ""]?.isbn as string)) ?? "",
+                value: "",
               },
             },
           }}
