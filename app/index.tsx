@@ -21,7 +21,7 @@ const dispatch = (event: string, payload: Record<string, unknown>) =>
     : Promise.resolve({ node: {} });
 
 export default function Index() {
-  const [nodes, setNodes] = useState<Record<string, Record<string, unknown>>>(
+  const [sources, setSources] = useState<Record<string, Record<string, unknown>>>(
     {},
   );
   const [isSheetOpen, setSheetOpen] = useState(false);
@@ -30,12 +30,12 @@ export default function Index() {
   useEffect(() => {
     dispatch("app_started", {})
       .then((data) => {
-        setNodes(data?.node);
+        setSources(data?.sources);
       })
       .catch(console.error);
   }, []);
 
-  console.log({ nodes });
+  console.log({ sources });
 
   return (
     <View
@@ -55,7 +55,7 @@ export default function Index() {
         {activeSource && (
           <BaseDetails
             node={{
-              ...(nodes && (nodes[activeSource ?? ""] ?? {})),
+              ...(sources && (sources[activeSource ?? ""] ?? {})),
             }}
           />
         )}
@@ -66,7 +66,7 @@ export default function Index() {
               slug: {
                 type: "string",
                 title: "ISBN",
-                value: (nodes && (nodes[activeSource ?? ""]?.slug as string)) ?? "",
+                value: (sources && (sources[activeSource ?? ""]?.isbn as string)) ?? "",
               },
             },
           }}
@@ -75,14 +75,14 @@ export default function Index() {
               ? console.log
               : ({ slug, targets }) =>
                   dispatch("source_added", { slug })
-                    .then((data) => setNodes(data?.node))
+                    .then((data) => setSources(data?.sources))
                     .then(() => setSheetOpen(false))
           }
         />)}
       </BottomDrawer>
-      {(nodes ?? {}) && (
+      {(sources ?? {}) && (
         <BaseList
-          nodes={Object.entries(nodes ?? {}).map(([id, node]) => ({
+          nodes={Object.entries(sources ?? {}).map(([id, node]) => ({
             ...node,
             onPress: () => {
               setActiveSource(id);
@@ -91,8 +91,8 @@ export default function Index() {
             actions: {
               delete: (e: GestureResponderEvent) => {
                 e.stopPropagation();
-                dispatch("node_deleted", { id }).then((data) =>
-                  setNodes(data?.node),
+                dispatch("source_deleted", { id }).then((data) =>
+                  setSources(data?.sources),
                 );
               },
             },
