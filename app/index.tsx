@@ -11,6 +11,8 @@ import {
   View,
 } from "./component";
 
+const sourcesURL = "https://openlibrary.org/api";
+
 // eventually this should be split based on platform as well--this is only true for web
 const dispatch = (event: string, payload: Record<string, unknown>) =>
   window.__TAURI_INTERNALS__
@@ -78,6 +80,7 @@ export default function Index() {
                     .then((data) => setSources(data?.sources))
                     .then(() => setSheetOpen(false))
           }
+          onChange={({ isbn }) => fetch(`${sourcesURL}/books?bibkeys=ISBN:${isbn}&jscmd=data&format=json`).then((response) => response.json()).then(console.log)}
         />)}
       </BottomDrawer>
       {(sources ?? {}) && (
