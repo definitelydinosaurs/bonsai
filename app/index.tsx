@@ -23,9 +23,9 @@ const dispatch = (event: string, payload: Record<string, unknown>) =>
     : Promise.resolve({ node: {} });
 
 export default function Index() {
-  const [sources, setSources] = useState<Record<string, Record<string, unknown>>>(
-    {},
-  );
+  const [sources, setSources] = useState<
+    Record<string, Record<string, unknown>>
+  >({});
   const [isSheetOpen, setSheetOpen] = useState(false);
   const [activeSource, setActiveSource] = useState<string | null>(null);
 
@@ -61,27 +61,35 @@ export default function Index() {
             }}
           />
         )}
-        {!activeSource && (<BaseForm
-          schema={{
-            title: "Create Source",
-            properties: {
-              isbn: {
-                type: "string",
-                title: "ISBN",
-                value: "",
+        {!activeSource && (
+          <BaseForm
+            schema={{
+              title: "Create Source",
+              properties: {
+                isbn: {
+                  type: "string",
+                  title: "ISBN",
+                  value: "",
+                },
               },
-            },
-          }}
-          onSubmit={
-            activeSource
-              ? console.log
-              : ({ isbn }) =>
-                  dispatch("source_added", { isbn })
-                    .then((data) => setSources(data?.sources))
-                    .then(() => setSheetOpen(false))
-          }
-          onChange={({ isbn }) => fetch(`${sourcesURL}/books?bibkeys=ISBN:${isbn}&jscmd=data&format=json`).then((response) => response.json()).then(console.log)}
-        />)}
+            }}
+            onSubmit={
+              activeSource
+                ? console.log
+                : ({ isbn }) =>
+                    dispatch("source_added", { isbn })
+                      .then((data) => setSources(data?.sources))
+                      .then(() => setSheetOpen(false))
+            }
+            onChange={({ isbn }) =>
+              fetch(
+                `${sourcesURL}/books?bibkeys=ISBN:${isbn}&jscmd=data&format=json`,
+              )
+                .then((response) => response.json())
+                .then(console.log)
+            }
+          />
+        )}
       </BottomDrawer>
       {(sources ?? {}) && (
         <BaseList
