@@ -63,7 +63,7 @@ export default function Index() {
           schema={{
             title: "Create Source",
             properties: {
-              slug: {
+              isbn: {
                 type: "string",
                 title: "ISBN",
                 value: "",
