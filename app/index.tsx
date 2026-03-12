@@ -28,6 +28,7 @@ export default function Index() {
   >({});
   const [isSheetOpen, setSheetOpen] = useState(false);
   const [activeSource, setActiveSource] = useState<string | null>(null);
+  const [searchResults, setSearchResults] = useState<Record<string, unknown>>();
 
   useEffect(() => {
     dispatch("app_started", {})
@@ -86,7 +87,7 @@ export default function Index() {
                 `${sourcesURL}/books?bibkeys=ISBN:${isbn}&jscmd=data&format=json`,
               )
                 .then((response) => response.json())
-                .then(console.log)
+                .then(setSearchResults)
             }
           />
         )}
