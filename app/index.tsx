@@ -74,10 +74,7 @@ export default function Index() {
                 },
               },
             }}
-            onSubmit={
-              activeSource
-                ? console.log
-                : ({ isbn }) =>
+            onSubmit={({ isbn }) =>
                     dispatch("source_added", { isbn })
                       .then((data) => setSources(data?.sources))
                       .then(() => setSheetOpen(false))
