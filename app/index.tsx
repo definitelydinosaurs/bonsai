@@ -84,7 +84,7 @@ export default function Index() {
                 `${sourcesURL}/books?bibkeys=ISBN:${isbn}&jscmd=data&format=json`,
               )
                 .then((response) => response.json())
-                .then(setSearchResults)
+                .then(data => setSearchResults(data[`ISBN:${isbn}`]))
             }
           />
         )}
