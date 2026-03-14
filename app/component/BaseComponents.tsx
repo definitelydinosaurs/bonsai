@@ -268,7 +268,7 @@ export const BaseDetails = ({ node }: { node: Record<string, unknown> }) => {
 
   return (
     <>
-      {Object.entries(node ?? {}).map(([key, value]) => (
+      {Object.entries(node ?? {}).filter(([key, value]) => value !== undefined && value !== null && typeof value === "string").map(([key, value]) => (
         <ListItem key={key}>{`${key}: ${value}`}</ListItem>
       ))}
     </>
