@@ -58,7 +58,7 @@ export default function Index() {
         {(searchResults || activeSource) && (
           <BaseDetails
             node={{
-              ...(sources && (sources[activeSource ?? ""] ?? {})),
+              ...(searchResults ? searchResults : sources && (sources[activeSource ?? ""] ?? {})),
             }}
           />
         )}
