@@ -75,7 +75,7 @@ export default function Index() {
               },
             }}
             onSubmit={({ isbn }) =>
-                    searchResults ? dispatch("source_added", { isbn, ...searchResults })
+                    searchResults ? dispatch("source_added", { isbn, ...(searchResults ?? {}) })
                       .then((data) => setSources(data?.sources))
                       .then(() => setSheetOpen(false)) : Promise.resolve()
             }
