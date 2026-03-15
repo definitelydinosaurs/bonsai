@@ -38,7 +38,7 @@ export default function Index() {
       .catch(console.error);
   }, []);
 
-  console.log({ sources });
+  console.log({ sources, searchResults });
 
   return (
     <View
