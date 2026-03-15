@@ -169,10 +169,12 @@ fn dispatch(
     machine: tauri::State<Machine>,
 ) -> String {
     println!("Dispatching event: {}", event);
+
     let data = machine.consume(json!({
         "type": event,
-        "payload": payload.as_deref().unwrap_or("{}")
+        "payload": serde_json::from_str::<Value>(payload.as_deref().unwrap_or("{}")).unwrap()
     }));
+
     serde_json::to_string(&data).unwrap()
 }
 
