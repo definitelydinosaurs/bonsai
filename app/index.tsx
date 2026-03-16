@@ -111,7 +111,7 @@ export default function Index() {
         />
       )}
       <Button
-        theme="blue"
+        // theme="blue"
         onPress={() => setSheetOpen(true)}
         position="absolute"
         top="$3"
