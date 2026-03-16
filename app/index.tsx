@@ -106,7 +106,7 @@ export default function Index() {
               },
             },
           }))}
-          targetKey="slug"
+          targetKey="title"
           width="100%"
         />
       )}
