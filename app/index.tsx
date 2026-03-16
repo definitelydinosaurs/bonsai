@@ -55,13 +55,6 @@ export default function Index() {
           setActiveSource(null);
         }}
       >
-        {(searchResults || activeSource) && (
-          <BaseDetails
-            node={{
-              ...(searchResults ? searchResults : sources && (sources[activeSource ?? ""] ?? {})),
-            }}
-          />
-        )}
         {!activeSource && (
           <BaseForm
             schema={{
@@ -86,6 +79,13 @@ export default function Index() {
                 .then((response) => response.json())
                 .then(data => setSearchResults(data[`ISBN:${isbn}`]))
             }
+          />
+        )}
+        {(searchResults || activeSource) && (
+          <BaseDetails
+            node={{
+              ...(searchResults ? searchResults : sources && (sources[activeSource ?? ""] ?? {})),
+            }}
           />
         )}
       </BottomDrawer>
