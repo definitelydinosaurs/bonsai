@@ -120,6 +120,9 @@ export default function Index() {
           }))}
           targetKey="title"
           width="100%"
+          alignItems="flex-start"
+          gap="$3"
+          padding="$3"
         />
       )}
       <Button
