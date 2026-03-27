@@ -8,7 +8,9 @@ import {
   BaseList,
   BottomDrawer,
   Button,
+  Text,
   View,
+  YStack,
 } from "./component";
 
 const sourcesURL = "https://openlibrary.org/api";
@@ -21,6 +23,8 @@ const dispatch = (event: string, payload: Record<string, unknown>) =>
         payload: JSON.stringify(payload),
       }).then((rsp) => JSON.parse(rsp as string))
     : Promise.resolve({ node: {} });
+
+const BookItem = ({ node }: { node: Record<string, unknown> }) => (<YStack><Text>{node.title}</Text></YStack>);
 
 export default function Index() {
   const [sources, setSources] = useState<
