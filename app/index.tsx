@@ -95,6 +95,7 @@ export default function Index() {
       </BottomDrawer>
       {(sources ?? {}) && (
         <BaseList
+          ItemComponent={BookItem}
           nodes={Object.entries(sources ?? {}).map(([id, node]) => ({
             ...node,
             onPress: () => {
