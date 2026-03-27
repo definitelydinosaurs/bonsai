@@ -55,9 +55,10 @@ export default function Index() {
     <View
       style={{
         flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
+        // justifyContent: "center",
+        // alignItems: "center",
       }}
+      pt="$8"
     >
       <BottomDrawer
         open={isSheetOpen}
@@ -123,6 +124,7 @@ export default function Index() {
           alignItems="flex-start"
           gap="$3"
           padding="$3"
+          alignContent="flex-start"
         />
       )}
       <Button
