@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import { GestureResponderEvent } from "react-native";
 
 import {
-  BaseDetails,
   BaseForm,
   BaseList,
   BottomDrawer,
@@ -11,7 +10,7 @@ import {
   Image,
   Text,
   View,
-  YStack,
+  YStack
 } from "./component";
 
 const sourcesURL = "https://openlibrary.org/api";
