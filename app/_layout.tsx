@@ -1,7 +1,4 @@
-import {
-  DarkTheme,
-  ThemeProvider
-} from "@react-navigation/native";
+import { DarkTheme, ThemeProvider } from "@react-navigation/native";
 import { Stack } from "expo-router";
 import { TamaguiProvider, Theme } from "tamagui";
 

@@ -10,7 +10,7 @@ import {
   Image,
   Text,
   View,
-  YStack
+  YStack,
 } from "./component";
 
 const sourcesURL = "https://openlibrary.org/api";
@@ -25,22 +25,36 @@ const dispatch = (event: string, payload: Record<string, unknown>) =>
     : Promise.resolve({ node: {} });
 
 const BookItem = ({ node }: { node: Record<string, unknown> }) => {
-  console.log(node.cover || "https://i.imgur.com/of4baFL.png" as string);
-  return (<YStack alignItems="center">
-    <Image source={node.cover || "https://i.imgur.com/of4baFL.png" as string} height={150} width={100} />
-    <Text>{node.title}</Text>
-  </YStack>);
+  console.log(node.cover || ("https://i.imgur.com/of4baFL.png" as string));
+  return (
+    <YStack alignItems="center">
+      <Image
+        source={node.cover || ("https://i.imgur.com/of4baFL.png" as string)}
+        height={150}
+        width={100}
+      />
+      <Text>{node.title}</Text>
+    </YStack>
+  );
 };
 
 const BookDetails = ({ node }: { node: Record<string, unknown> }) => {
-  return (<YStack gap="$3" alignItems="center" mt="$4">
-    <Image source={node.cover || "https://i.imgur.com/of4baFL.png" as string} height={150} width={100} />
-    {/* <YStack justifyContent="center"> */}
+  return (
+    <YStack gap="$3" alignItems="center" mt="$4">
+      <Image
+        source={node.cover || ("https://i.imgur.com/of4baFL.png" as string)}
+        height={150}
+        width={100}
+      />
       <Text>{node.title}</Text>
-      <Text>{(node.authors as Record<string, unknown>[])?.map((a: Record<string, unknown>) => a.name).join(", ")}</Text>
+      <Text>
+        {(node.authors as Record<string, unknown>[])
+          ?.map((a: Record<string, unknown>) => a.name)
+          .join(", ")}
+      </Text>
       <Text>Published {node.publish_date}</Text>
-    {/* </YStack> */}
-  </YStack>);
+    </YStack>
+  );
 };
 
 export default function Index() {
@@ -90,23 +104,27 @@ export default function Index() {
               },
             }}
             onSubmit={({ isbn }) =>
-                    searchResults ? dispatch("source_added", { isbn, ...(searchResults ?? {}) })
-                      .then((data) => setSources(data?.sources))
-                      .then(() => setSheetOpen(false)) : Promise.resolve()
+              searchResults
+                ? dispatch("source_added", { isbn, ...(searchResults ?? {}) })
+                    .then((data) => setSources(data?.sources))
+                    .then(() => setSheetOpen(false))
+                : Promise.resolve()
             }
             onChange={({ isbn }) =>
               fetch(
                 `${sourcesURL}/books?bibkeys=ISBN:${isbn}&jscmd=data&format=json`,
               )
                 .then((response) => response.json())
-                .then(data => setSearchResults(data[`ISBN:${isbn}`]))
+                .then((data) => setSearchResults(data[`ISBN:${isbn}`]))
             }
           />
         )}
         {(searchResults || activeSource) && (
           <BookDetails
             node={{
-              ...(searchResults ? searchResults : sources && (sources[activeSource ?? ""] ?? {})),
+              ...(searchResults
+                ? searchResults
+                : sources && (sources[activeSource ?? ""] ?? {})),
             }}
           />
         )}
