@@ -33,6 +33,17 @@ const BookItem = ({ node }: { node: Record<string, unknown> }) => {
   </YStack>);
 };
 
+const BookDetails = ({ node }: { node: Record<string, unknown> }) => {
+  return (<YStack gap="$3" alignItems="center" mt="$4">
+    <Image source={node.cover || "https://i.imgur.com/of4baFL.png" as string} height={150} width={100} />
+    {/* <YStack justifyContent="center"> */}
+      <Text>{node.title}</Text>
+      <Text>{(node.authors as Record<string, unknown>[])?.map((a: Record<string, unknown>) => a.name).join(", ")}</Text>
+      <Text>Published {node.publish_date}</Text>
+    {/* </YStack> */}
+  </YStack>);
+};
+
 export default function Index() {
   const [sources, setSources] = useState<
     Record<string, Record<string, unknown>>
