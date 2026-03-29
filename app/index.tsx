@@ -27,7 +27,7 @@ const dispatch = (event: string, payload: Record<string, unknown>) =>
 const BookItem = ({ node }: { node: Record<string, unknown> }) => {
   console.log(node.cover || ("https://i.imgur.com/of4baFL.png" as string));
   return (
-    <YStack alignItems="center">
+    <YStack alignItems="center" flexGrow={1}>
       <Image
         source={node.cover || ("https://i.imgur.com/of4baFL.png" as string)}
         height={150}
