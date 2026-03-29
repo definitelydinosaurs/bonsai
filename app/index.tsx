@@ -155,6 +155,7 @@ export default function Index() {
           alignItems="flex-start"
           gap="$3"
           padding="$3"
+          flexWrap="wrap"
           alignContent="flex-start"
           flexDirection="row"
         />
