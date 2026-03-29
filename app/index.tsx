@@ -156,6 +156,7 @@ export default function Index() {
           gap="$3"
           padding="$3"
           alignContent="flex-start"
+          flexDirection="row"
         />
       )}
       <Button
