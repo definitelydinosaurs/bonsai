@@ -94,7 +94,7 @@ export default function Index() {
         {!activeSource && (
           <BaseForm
             schema={{
-              title: "Create Source",
+              title: "Add Source",
               properties: {
                 isbn: {
                   type: "string",
@@ -102,6 +102,7 @@ export default function Index() {
                   value: "",
                 },
               },
+              submitText: "Add",
             }}
             onSubmit={({ isbn }) =>
               searchResults
