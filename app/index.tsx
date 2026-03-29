@@ -91,6 +91,7 @@ export default function Index() {
           setActiveSource(null);
         }}
       >
+        <View height="100%">
         {!activeSource && (
           <BaseForm
             schema={{
@@ -129,6 +130,7 @@ export default function Index() {
             }}
           />
         )}
+        </View>
       </BottomDrawer>
       {(sources ?? {}) && (
         <BaseList
