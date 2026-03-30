@@ -1,15 +1,24 @@
-export const extractBook = ({ isbn, title, subtitle, authors = [], cover, description = '', publish_date, number_of_pages }) => ({
+export const extractBook = ({
+  isbn,
+  title,
+  subtitle,
+  authors = [],
+  cover,
+  description = "",
+  publish_date,
+  number_of_pages,
+}) => ({
   isbn,
   cover,
   title,
   subtitle,
-  authors: authors.map(author => author.name),
+  authors: authors.map((author) => author.name),
   description,
   publishDate: publish_date,
-  numberOfPages: number_of_pages
-})
+  numberOfPages: number_of_pages,
+});
 
-export const isDOI = string => {
-  const regex = /\b(10[.][0-9]{4,}(?:[.][0-9]+)*\b)/g
-  return regex.test(string)
-}
+export const isDOI = (string) => {
+  const regex = /\b(10[.][0-9]{4,}(?:[.][0-9]+)*\b)/g;
+  return regex.test(string);
+};

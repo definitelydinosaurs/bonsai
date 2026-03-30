@@ -1,14 +1,14 @@
-const CreateBook = props => {
-  const [title, setTitle] = useState('')
+const CreateBook = (props) => {
+  const [title, setTitle] = useState("");
   return (
-    <View className='w-1/2'>
+    <View className="w-1/2">
       <Input
         value={title}
         onChangeText={setTitle}
-        placeholder='Enter title here...'
+        placeholder="Enter title here..."
       />
     </View>
-  )
-}
+  );
+};
 
-export default CreateBook
+export default CreateBook;

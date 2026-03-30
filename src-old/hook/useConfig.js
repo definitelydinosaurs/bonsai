@@ -1,10 +1,10 @@
-import { useMemo } from 'react'
+import { useMemo } from "react";
 
-import config from '../../config.json'
+import config from "../../config.json";
 
 const useConfig = () => {
-  const configuration = useMemo(() => config, [])
-  return configuration
-} 
+  const configuration = useMemo(() => config, []);
+  return configuration;
+};
 
-export default useConfig
+export default useConfig;

@@ -92,44 +92,44 @@ export default function Index() {
         }}
       >
         <View height="100%">
-        {!activeSource && (
-          <BaseForm
-            schema={{
-              title: "Add Source",
-              properties: {
-                isbn: {
-                  type: "string",
-                  title: "ISBN",
-                  value: "",
+          {!activeSource && (
+            <BaseForm
+              schema={{
+                title: "Add Source",
+                properties: {
+                  isbn: {
+                    type: "string",
+                    title: "ISBN",
+                    value: "",
+                  },
                 },
-              },
-              submitText: "Add",
-            }}
-            onSubmit={({ isbn }) =>
-              searchResults
-                ? dispatch("source_added", { isbn, ...(searchResults ?? {}) })
-                    .then((data) => setSources(data?.sources))
-                    .then(() => setSheetOpen(false))
-                : Promise.resolve()
-            }
-            onChange={({ isbn }) =>
-              fetch(
-                `${sourcesURL}/books?bibkeys=ISBN:${isbn}&jscmd=data&format=json`,
-              )
-                .then((response) => response.json())
-                .then((data) => setSearchResults(data[`ISBN:${isbn}`]))
-            }
-          />
-        )}
-        {(searchResults || activeSource) && (
-          <BookDetails
-            node={{
-              ...(searchResults
-                ? searchResults
-                : sources && (sources[activeSource ?? ""] ?? {})),
-            }}
-          />
-        )}
+                submitText: "Add",
+              }}
+              onSubmit={({ isbn }) =>
+                searchResults
+                  ? dispatch("source_added", { isbn, ...(searchResults ?? {}) })
+                      .then((data) => setSources(data?.sources))
+                      .then(() => setSheetOpen(false))
+                  : Promise.resolve()
+              }
+              onChange={({ isbn }) =>
+                fetch(
+                  `${sourcesURL}/books?bibkeys=ISBN:${isbn}&jscmd=data&format=json`,
+                )
+                  .then((response) => response.json())
+                  .then((data) => setSearchResults(data[`ISBN:${isbn}`]))
+              }
+            />
+          )}
+          {(searchResults || activeSource) && (
+            <BookDetails
+              node={{
+                ...(searchResults
+                  ? searchResults
+                  : sources && (sources[activeSource ?? ""] ?? {})),
+              }}
+            />
+          )}
         </View>
       </BottomDrawer>
       {(sources ?? {}) && (

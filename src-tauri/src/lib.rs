@@ -51,6 +51,7 @@ fn create_persist_event_fn(app: &tauri::AppHandle) -> impl Fn(&str, &Value, &Val
             serde_json::from_str(&existing_events_str).unwrap();
         let event_id = event["id"].as_str().unwrap().to_string();
         events.insert(event_id, event.clone());
+        println!("Persisting event: {}", event);
         write_file(&file_path_str, &json!(events)).expect("Failed to write to events file");
     }
 }
