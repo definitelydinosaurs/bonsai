@@ -29,7 +29,7 @@ const BookItem = ({ node }: { node: Record<string, unknown> }) => {
   return (
     <YStack alignItems="center" flexGrow={1}>
       <Image
-        source={node.cover || ("https://i.imgur.com/of4baFL.png" as string)}
+        source={(node.cover as Record<string, unknown>)?.large || ("https://i.imgur.com/of4baFL.png" as string)}
         height={150}
         width={100}
       />
@@ -42,7 +42,7 @@ const BookDetails = ({ node }: { node: Record<string, unknown> }) => {
   return (
     <YStack gap="$3" alignItems="center" mt="$4">
       <Image
-        source={node.cover || ("https://i.imgur.com/of4baFL.png" as string)}
+        source={(node.cover as Record<string, unknown>)?.large || ("https://i.imgur.com/of4baFL.png" as string)}
         height={150}
         width={100}
       />
