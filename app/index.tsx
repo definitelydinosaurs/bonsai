@@ -33,7 +33,7 @@ const BookItem = ({ node }: { node: Record<string, unknown> }) => {
         height={150}
         width={100}
       />
-      <Text>{node.title}</Text>
+      <Text textAlign="center">{node.title}</Text>
     </YStack>
   );
 };
@@ -152,12 +152,10 @@ export default function Index() {
           }))}
           targetKey="title"
           width="100%"
-          alignItems="flex-start"
           gap="$3"
           padding="$3"
-          flexWrap="wrap"
-          alignContent="flex-start"
-          flexDirection="row"
+          display="grid"
+          gridTemplateColumns="repeat(auto-fill, minmax(120px, 1fr))"
         />
       )}
       <Button
